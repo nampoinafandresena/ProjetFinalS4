@@ -60,3 +60,5 @@ CREATE INDEX idx_historiques_user1 ON historiques(user1);
 CREATE INDEX idx_historiques_user2 ON historiques(user2);
 CREATE INDEX idx_historiques_type ON historiques(type_mvt);
 CREATE INDEX idx_historiques_date ON historiques(date_transaction);
+
+
