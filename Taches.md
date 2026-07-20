@@ -28,8 +28,10 @@ ETU004017 - ETU004255
     - configuration des préfixes valable de l’opérateur (ex: 033 et 037)
         - ajout de nouveaux prefixes
     - creation des type d operations & modifications des tranches
-        - modfication des pix dans les tranches
+        - modfication des prix dans les tranches selon le type de transaction 
     - gain (via frais de retrait et transfert)
+        - globale (tout operateur confondu)
+        - selon operateur
     - situation des comptes clients 
         - situation globale
             - solde

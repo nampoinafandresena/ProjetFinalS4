@@ -27,14 +27,19 @@ CREATE TABLE type_operation (
 );
 
 -- Table du barème des frais
-CREATE TABLE bareme_frais (
+CREATE TABLE bareme_frais_details (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     min REAL NOT NULL,
     max REAL NOT NULL,
     frais REAL NOT NULL,
+    id_type_operation INTEGER NOT NULL,
+    id_operateur INTEGER NOT NULL,
+    FOREIGN KEY (id_type_operation) REFERENCES type_operation(id),
+    FOREIGN KEY (id_operateur) REFERENCES operateur(id),
     CHECK (min >= 0),
     CHECK (max >= min)
 );
+
 
 -- Table des historiques de transactions (CORRIGÉE)
 CREATE TABLE historiques (
