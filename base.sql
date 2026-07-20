@@ -5,6 +5,20 @@ CREATE TABLE user (
     solde REAL DEFAULT 0.0,
     role TEXT DEFAULT 'client' CHECK (role IN ('admin', 'client'))
 );
+ 
+-- Table des opérateurs
+CREATE TABLE operateur (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    operateur TEXT UNIQUE NOT NULL
+);
+
+-- Table des préfixes 
+CREATE TABLE prefixes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prefixes TEXT UNIQUE NOT NULL,
+    id_operateur INTEGER NOT NULL,
+    FOREIGN KEY (id_operateur) REFERENCES operateur(id)
+);
 
 -- Table des types d'opération
 CREATE TABLE type_operation (
