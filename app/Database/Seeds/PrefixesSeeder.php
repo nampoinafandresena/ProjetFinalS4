@@ -18,16 +18,16 @@ class PrefixesSeeder extends Seeder
 
         $data = [
             // Orange
-            ['prefixes' => '032', 'id_operateur' => $orange->id],
-            ['prefixes' => '037', 'id_operateur' => $orange->id],
+            ['prefixes' => '032', 'id_operateur' => $orange->id, 'actif' => 1],
+            ['prefixes' => '037', 'id_operateur' => $orange->id, 'actif' => 1],
             
             // Airtel
-            ['prefixes' => '033', 'id_operateur' => $airtel->id],
-            ['prefixes' => '039', 'id_operateur' => $airtel->id],
+            ['prefixes' => '033', 'id_operateur' => $airtel->id, 'actif' => 1],
+            ['prefixes' => '039', 'id_operateur' => $airtel->id, 'actif' => 1],
             
             // Telma
-            ['prefixes' => '034', 'id_operateur' => $telma->id],
-            ['prefixes' => '038', 'id_operateur' => $telma->id],
+            ['prefixes' => '034', 'id_operateur' => $telma->id, 'actif' => 1],
+            ['prefixes' => '038', 'id_operateur' => $telma->id, 'actif' => 1],
         ];
 
         $this->db->table('prefixes')->insertBatch($data);

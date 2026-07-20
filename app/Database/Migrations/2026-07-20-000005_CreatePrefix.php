@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreatePrefixesTable extends Migration
+class CreatePrefixes extends Migration
 {
     public function up()
     {
@@ -25,6 +25,12 @@ class CreatePrefixesTable extends Migration
                 'type' => 'INTEGER',
                 'constraint' => 11,
                 'unsigned' => true,
+                'null' => false,
+            ],
+            'actif' => [
+                'type' => 'INTEGER',
+                'constraint' => 1,
+                'default' => 1,
                 'null' => false,
             ],
             'created_at' => [

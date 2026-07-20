@@ -22,13 +22,11 @@ class DashboardController extends BaseController
     
     public function index()
     {
-        
         $user = session()->get('user');
         
         if (!$user) {
             return redirect()->to('/client/login')->with('error', 'Veuillez vous connecter');
         }
-        
         
         $userData = $this->userModel->find($user['id']);
         if ($userData) {
@@ -36,19 +34,10 @@ class DashboardController extends BaseController
             session()->set('user', $user);
         }
         
-        
-        $db = \Config\Database::connect();
-        
-        $sql = "
-            SELECT * FROM historiques 
-            WHERE user1 = ? OR user2 = ?
-            GROUP BY id
-            ORDER BY date_transaction DESC 
-            LIMIT 10
-        ";
-        
-        $transactions = $db->query($sql, [$user['id'], $user['id']])->getResultArray();
-        
+        // ============================================
+        // UTILISER LA METHODE DU MODELE
+        // ============================================
+        $transactions = $this->historiqueModel->getTransactionsByUser($user['id'], 10);
         
         $types = $this->typeOperationModel->findAll();
         $typeMap = [];
@@ -56,11 +45,9 @@ class DashboardController extends BaseController
             $typeMap[$t['id']] = $t['label'];
         }
         
-        
         foreach ($transactions as &$tx) {
             $tx['type_label'] = $typeMap[$tx['type_mvt']] ?? 'Inconnu';
         }
-        
         
         $total_in = 0;
         $total_out = 0;

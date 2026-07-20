@@ -22,13 +22,11 @@ class HistoryController extends BaseController
     
     public function index()
     {
-        
         $user = session()->get('user');
         
         if (!$user) {
             return redirect()->to('/client/login')->with('error', 'Veuillez vous connecter');
         }
-        
         
         $userData = $this->userModel->find($user['id']);
         if ($userData) {
@@ -36,30 +34,21 @@ class HistoryController extends BaseController
             session()->set('user', $user);
         }
         
+        // ============================================
+        // UTILISER LA METHODE DU MODELE (getTransactionsByUser)
+        // ============================================
+        $transactions = $this->historiqueModel->getTransactionsByUser($user['id'], 100);
         
-        $db = \Config\Database::connect();
-        
-        $sql = "
-            SELECT * FROM historiques 
-            WHERE user1 = ? OR user2 = ?
-            GROUP BY id
-            ORDER BY date_transaction DESC 
-            LIMIT 100
-        ";
-        
-        $transactions = $db->query($sql, [$user['id'], $user['id']])->getResultArray();
-        
-        
+        // Récupérer les types d'opération
         $types = $this->typeOperationModel->findAll();
         $typeMap = [];
         foreach ($types as $t) {
             $typeMap[$t['id']] = $t['label'];
         }
         
-        
+        // Ajouter les informations
         foreach ($transactions as &$tx) {
             $tx['type_label'] = $typeMap[$tx['type_mvt']] ?? 'Inconnu';
-            
             
             $typeLabel = $tx['type_label'];
             $tx['is_depot'] = ($typeLabel === 'dépôt');
@@ -90,7 +79,6 @@ class HistoryController extends BaseController
                 }
             }
             
-            
             if ($tx['user1'] == $user['id']) {
                 $tx['autre_user'] = $tx['user2'] ? $this->userModel->find($tx['user2']) : null;
             } else {
@@ -98,7 +86,7 @@ class HistoryController extends BaseController
             }
         }
         
-       
+        // Calculer les totaux
         $total_depots = 0;
         $total_retraits = 0;
         $total_transferts = 0;

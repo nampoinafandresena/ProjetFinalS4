@@ -62,6 +62,19 @@
         <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
             <div class="divide-y divide-slate-50" id="transactionsList">
                 <?php if (!empty($transactions)): ?>
+                    <?php 
+                    // Éliminer les doublons par ID (sécurité supplémentaire)
+                    $uniqueTx = [];
+                    $seenIds = [];
+                    foreach ($transactions as $tx) {
+                        if (!in_array($tx['id'], $seenIds)) {
+                            $seenIds[] = $tx['id'];
+                            $uniqueTx[] = $tx;
+                        }
+                    }
+                    $transactions = $uniqueTx;
+                    ?>
+                    
                     <?php foreach ($transactions as $tx): ?>
                     <div class="transaction-item flex items-center gap-4 px-6 py-4 hover:bg-slate-50/50 transition-colors" data-type="<?= $tx['type_label'] ?? '' ?>">
                         <div class="w-10 h-10 rounded-xl <?= $tx['is_depot'] ? 'bg-emerald-50 text-emerald-600' : ($tx['is_transfert'] ? 'bg-sky-50 text-sky-600' : 'bg-amber-50 text-amber-600') ?> flex items-center justify-center flex-shrink-0">
@@ -147,7 +160,6 @@
         function setFilter(filter, btn) {
             currentFilter = filter;
             
-            // Mettre à jour les boutons
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
@@ -164,12 +176,10 @@
                 
                 let show = true;
                 
-                // Filtrer par type
                 if (currentFilter !== 'all' && type !== currentFilter) {
                     show = false;
                 }
                 
-                // Filtrer par recherche
                 if (show && search && !text.includes(search)) {
                     show = false;
                 }

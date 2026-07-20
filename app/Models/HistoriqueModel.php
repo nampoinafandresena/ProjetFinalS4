@@ -17,7 +17,9 @@ class HistoriqueModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     
-  
+    /**
+     * Récupère les transactions d'un utilisateur (sans doublons avec UNION)
+     */
     public function getTransactionsByUser($userId, $limit = 10)
     {
         $sql = "
@@ -33,7 +35,9 @@ class HistoriqueModel extends Model
         return $this->db->query($sql, [$userId, $userId, $limit])->getResultArray();
     }
     
-   
+    /**
+     * Récupère l'historique avec détails (sans doublons)
+     */
     public function getHistoriqueAvecDetails($userId, $limit = 10)
     {
         $sql = "

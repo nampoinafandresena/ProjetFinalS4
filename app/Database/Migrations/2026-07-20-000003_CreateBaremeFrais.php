@@ -30,6 +30,18 @@ class CreateBaremeFrais extends Migration
                 'constraint' => '10,2',
                 'null' => false,
             ],
+            'id_type_operation' => [
+                'type' => 'INTEGER',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => false,
+            ],
+            'id_operateur' => [
+                'type' => 'INTEGER',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => false,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -41,7 +53,8 @@ class CreateBaremeFrais extends Migration
         ]);
         
         $this->forge->addKey('id', true);
-        $this->forge->addKey(['min', 'max'], false);
+        $this->forge->addForeignKey('id_type_operation', 'type_operation', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('id_operateur', 'operateur', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('bareme_frais');
     }
 

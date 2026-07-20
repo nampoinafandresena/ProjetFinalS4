@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-class PrefixesModel extends Model{
-    protected $table = "prefixes";
-    protected $primaryKey = "id";
-    protected $allowedFields = ["prefixes", "id_operateur", "actif"];
 use CodeIgniter\Model;
 
 class PrefixesModel extends Model
@@ -15,7 +11,7 @@ class PrefixesModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
-    protected $allowedFields    = ['prefixes', 'id_operateur'];
+    protected $allowedFields    = ['prefixes', 'id_operateur', 'actif'];
     
     protected $useTimestamps = false;
 
@@ -39,35 +35,38 @@ class PrefixesModel extends Model
         ],
     ];
 
-    public function getPrefixesWithOperateur() {
+    public function getPrefixesWithOperateur()
+    {
         return $this->select('prefixes.*, operateur.operateur')
                     ->join('operateur', 'operateur.id = prefixes.id_operateur')
                     ->orderBy('prefixes.prefixes', 'ASC')
                     ->findAll();
     }
 
-    public function getActivePrefixes() {
+    public function getActivePrefixes()
+    {
         return $this->where('actif', 1)
                     ->orderBy('prefixes', 'ASC')
                     ->findAll();
     }
 
-    public function getPrefixesByOperateur(int $operateurId) {
+    public function getPrefixesByOperateur(int $operateurId)
+    {
         return $this->where('id_operateur', $operateurId)
                     ->orderBy('prefixes', 'ASC')
                     ->findAll();
     }
 
-    public function togglePrefix(int $id) {
+    public function togglePrefix(int $id)
+    {
         $prefix = $this->find($id);
         if (!$prefix) {
             return false;
         }
-        
         $newStatus = $prefix['actif'] == 1 ? 0 : 1;
         return $this->update($id, ['actif' => $newStatus]);
-    
-   
+    }
+
     public function getAllPrefixesWithOperateur()
     {
         $builder = $this->db->table('prefixes p');
@@ -76,20 +75,17 @@ class PrefixesModel extends Model
         $builder->orderBy('p.prefixes', 'ASC');
         return $builder->get()->getResultArray();
     }
-    
-   
+
     public function getAllPrefixes()
     {
         return $this->orderBy('prefixes', 'ASC')->findAll();
     }
-    
-    
+
     public function prefixExists($prefix)
     {
         return $this->where('prefixes', $prefix)->countAllResults() > 0;
     }
-    
-    
+
     public function getOperateurByPrefix($prefix)
     {
         $builder = $this->db->table('prefixes p');

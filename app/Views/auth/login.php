@@ -59,8 +59,8 @@
                     </div>
                 </a>
 
-                <!-- Espace Opérateur -->
-                <a href="<?= base_url('operator/dashboard') ?>"
+                <!-- Espace Opérateur / Admin -->
+                <a href="<?= base_url('admin/dashboard') ?>"
                     class="group relative overflow-hidden p-8 rounded-3xl bg-white border border-slate-100 card-hover text-left block">
                     <div
                         class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-slate-200/50 blur-3xl group-hover:bg-slate-300/60 transition-colors">
