@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
                 'role' => 'client',
             ],
             [
-                'numero' => '037000002',
+                'numero' => '0370000002',
                 'solde' => 2500.00,
                 'role' => 'client',
             ],
