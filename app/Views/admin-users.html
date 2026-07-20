@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>Mobile Money - Admin Utilisateurs</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 256px; background: white; border-right: 1px solid #f1f5f9; padding: 20px; display: none; flex-direction: column; z-index: 40; }
+        @media (min-width: 1024px) { .sidebar { display: flex; } }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #64748b; transition: all 0.2s; width: 100%; border: none; background: transparent; cursor: pointer; }
+        .nav-item:hover { background: #f1f5f9; }
+        .nav-item.active { background: #0f172a; color: white; }
+        .mobile-nav { display: flex; gap: 4px; padding: 8px 16px; background: white; border-bottom: 1px solid #f1f5f9; overflow-x: auto; }
+        @media (min-width: 1024px) { .mobile-nav { display: none; } }
+        .mobile-nav-item { padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; border: none; background: #f1f5f9; color: #64748b; cursor: pointer; }
+        .mobile-nav-item.active { background: #0f172a; color: white; }
+        .btn-primary { background: #0f766e; color: white; padding: 10px 20px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { background: #0d6b63; transform: scale(0.98); }
+        .input-search { width: 100%; padding: 12px 16px 12px 44px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; font-weight: 500; transition: all 0.2s; }
+        .input-search:focus { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15,118,110,0.2); }
+        .user-item { padding: 16px 24px; border-bottom: 1px solid #f8fafc; display: flex; align-items: center; gap: 16px; transition: background 0.2s; }
+        .user-item:hover { background: #f8fafc; }
+        .badge-admin { background: #8b5cf6; color: white; padding: 2px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+        .badge-client { background: #0ea5e9; color: white; padding: 2px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 50; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: white; border-radius: 24px; max-width: 420px; width: 100%; padding: 24px; animation: scaleIn 0.2s ease-out; }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .input-field { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; font-weight: 500; transition: all 0.2s; }
+        .input-field:focus { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15,118,110,0.2); }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="flex items-center gap-3 px-2 py-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div><p class="font-bold text-slate-900 leading-tight">Administrateur</p><p class="text-xs text-slate-500">Gestion système</p></div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <button class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</button>
+            <button class="nav-item active">Utilisateurs</button>
+            <button class="nav-item" onclick="window.location.href='admin-config.html'">Configuration</button>
+        </nav>
+        <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Quitter
+        </a>
+    </aside>
+
+    <header class="lg:hidden bg-white border-b border-slate-100 px-4 py-3 sticky top-0 z-30 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <span class="font-bold text-slate-900">Administrateur</span>
+        </div>
+        <a href="index.html" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        </a>
+    </header>
+    <nav class="lg:hidden mobile-nav">
+        <button class="mobile-nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</button>
+        <button class="mobile-nav-item active">Utilisateurs</button>
+        <button class="mobile-nav-item" onclick="window.location.href='admin-config.html'">Configuration</button>
+    </nav>
+
+    <main class="lg:ml-64 p-4 sm:p-6 lg:p-8 max-w-6xl">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Utilisateurs</h1>
+                    <p class="text-slate-500 mt-1">Gestion des utilisateurs du système</p>
+                </div>
+                <button class="btn-primary" onclick="openModal()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Ajouter
+                </button>
+            </div>
+
+            <div class="relative">
+                <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" placeholder="Rechercher par nom, téléphone ou email..." class="input-search" />
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
+                <div class="user-item">
+                    <div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold flex-shrink-0">SA</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-slate-900">Super Admin</p>
+                        <p class="text-xs text-slate-500">admin@mobilemoney.mg · +0331234567</p>
+                    </div>
+                    <span class="badge-admin">Admin</span>
+                    <div class="flex items-center gap-2 ml-4">
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="user-item">
+                    <div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold flex-shrink-0">JR</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-slate-900">Jean Rakoto</p>
+                        <p class="text-xs text-slate-500">jean@mobilemoney.mg · +0331234567</p>
+                    </div>
+                    <span class="badge-admin">Admin</span>
+                    <div class="flex items-center gap-2 ml-4">
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="user-item">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold flex-shrink-0">MR</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-slate-900">Marie Razafy</p>
+                        <p class="text-xs text-slate-500">marie@client.mg · +0337654321</p>
+                    </div>
+                    <span class="badge-client">Client</span>
+                    <div class="flex items-center gap-2 ml-4">
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="user-item">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold flex-shrink-0">HA</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-slate-900">Hery Andry</p>
+                        <p class="text-xs text-slate-500">hery@client.mg · +0371122334</p>
+                    </div>
+                    <span class="badge-client">Client</span>
+                    <div class="flex items-center gap-2 ml-4">
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+                        <button class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Ajout -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">Ajouter un utilisateur</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nom complet</label>
+                    <input type="text" placeholder="Jean Rakoto" class="input-field" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                    <input type="email" placeholder="jean@exemple.mg" class="input-field" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Téléphone</label>
+                    <input type="tel" placeholder="0331234567" class="input-field" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Rôle</label>
+                    <select class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all">
+                        <option value="client">Client</option>
+                        <option value="admin">Administrateur</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeModal()" class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all">Annuler</button>
+                    <button class="flex-1 py-3 rounded-xl bg-violet-600 text-white font-semibold hover:bg-violet-700 transition-all">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() { document.getElementById('modal').classList.add('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.getElementById('modal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+    </script>
+</body>
+</html>
