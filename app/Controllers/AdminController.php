@@ -203,6 +203,56 @@ class AdminController extends BaseController
     }
 
     // ============================================
+    public function clients()
+    {
+        $userModel = new UserModel();
+        $historiqueModel = new HistoriqueModel();
+        
+        // Récupérer les clients avec pagination
+        $clients = $userModel->getClientsPaginated(10);
+        
+        // Calculer les statistiques
+        $totalClients = $userModel->where('role', 'client')->countAllResults();
+        $totalFonds = $userModel->selectSum('solde')
+                                ->where('role', 'client')
+                                ->first()['solde'] ?? 0;
+        
+        // Pour chaque client, récupérer la date de dernière transaction
+        foreach ($clients as &$client) {
+            $lastTransaction = $historiqueModel
+                ->where('user1', $client['id'])
+                ->orWhere('user2', $client['id'])
+                ->orderBy('date_transaction', 'DESC')
+                ->first();
+            
+            $client['last_transaction'] = $lastTransaction ? $lastTransaction['date_transaction'] : null;
+            $client['initials'] = substr($client['numero'], -2);
+        }
+        
+        $data = [
+            'clients' => $clients,
+            'total_clients' => $totalClients,
+            'total_fonds' => $totalFonds,
+            'pager' => $userModel->pager,
+            'title' => 'Gestion des clients'
+        ];
+
+        return view('pages/operator-clients', $data);
+    }
+
+    /**
+     * Génère les initiales à partir du numéro de téléphone
+     */
+    private function getInitials($numero)
+    {
+        // Prendre les 2 derniers chiffres du numéro
+        $lastDigits = substr($numero, -2);
+        // Ou prendre les 2 premières lettres du nom (si vous avez un champ nom)
+        // Pour l'instant, on utilise les 2 derniers chiffres
+        return $lastDigits;
+    }
+
+    // ============================================
     // MÉTHODES HELPER
     // ============================================
 
@@ -241,17 +291,17 @@ class AdminController extends BaseController
         return $stats;
     }
 
-    public function clients()
-    {
-        $userModel = new UserModel();
-        $clients = $userModel->getClients();
+    // public function clients()
+    // {
+    //     $userModel = new UserModel();
+    //     $clients = $userModel->getClients();
 
-        $data = [
-            'clients' => $clients,
-            'title' => 'Liste des clients'
-        ];
+    //     $data = [
+    //         'clients' => $clients,
+    //         'title' => 'Liste des clients'
+    //     ];
 
-        return view('pages/operator-clients', $data);
-    }
+    //     return view('pages/operator-clients', $data);
+    // }
 
 }
