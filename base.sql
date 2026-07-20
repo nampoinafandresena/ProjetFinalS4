@@ -36,6 +36,8 @@ CREATE TABLE bareme_frais (
     CHECK (max >= min)
 );
 
+ALTER  
+
 -- Table des historiques de transactions (CORRIGÉE)
 CREATE TABLE historiques (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

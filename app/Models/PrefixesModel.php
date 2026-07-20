@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 class PrefixesModel extends Model{
     protected $table = "prefixes";
     protected $primaryKey = "id";
-    protected $allowedFields = ["prefixes", "id_operateur"];
+    protected $allowedFields = ["prefixes", "id_operateur", "actif"];
 
     protected $returnType = 'array';
     protected $useTimestamps = false;
@@ -14,6 +14,7 @@ class PrefixesModel extends Model{
     protected $validationRules = [
         'prefixes' => 'required|is_unique[prefixes.prefixes]|min_length[2]|max_length[5]|regex_match[/^[0-9]+$/]',
         'id_operateur' => 'required|integer|is_not_unique[operateur.id]',
+        'actif' => 'permit_empty|integer|in_list[0,1]',
     ];
 
     protected $validationMessages = [
@@ -37,39 +38,26 @@ class PrefixesModel extends Model{
                     ->findAll();
     }
 
+    public function getActivePrefixes() {
+        return $this->where('actif', 1)
+                    ->orderBy('prefixes', 'ASC')
+                    ->findAll();
+    }
+
     public function getPrefixesByOperateur(int $operateurId) {
         return $this->where('id_operateur', $operateurId)
                     ->orderBy('prefixes', 'ASC')
                     ->findAll();
     }
 
-    public function isValidPrefix(string $numero) {
-        $prefixes = $this->findAll();
-        foreach ($prefixes as $prefix) {
-            if (strpos($numero, $prefix['prefixes']) === 0) {
-                return true;
-            }
+    public function togglePrefix(int $id) {
+        $prefix = $this->find($id);
+        if (!$prefix) {
+            return false;
         }
-        return false;
-    }
-
-    public function getPrefixFromNumber(string $numero) {
-        $prefixes = $this->findAll();
-        foreach ($prefixes as $prefix) {
-            if (strpos($numero, $prefix['prefixes']) === 0) {
-                return $prefix;
-            }
-        }
-        return null;
-    }
-
-    public function getOperateurByNumber(string $numero) {
-        $prefix = $this->getPrefixFromNumber($numero);
-        if ($prefix) {
-            $operateurModel = new OperateurModel();
-            return $operateurModel->find($prefix['id_operateur']);
-        }
-        return null;
+        
+        $newStatus = $prefix['actif'] == 1 ? 0 : 1;
+        return $this->update($id, ['actif' => $newStatus]);
     }
 
     public function prefixExists(string $prefix) {
