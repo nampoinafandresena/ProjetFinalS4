@@ -10,9 +10,9 @@ class UserSeeder extends Seeder
     {
         $data = [
             [
-                'numero' => '0000000000',
+                'numero' => '0383833838',
                 'solde' => null,
-                'role' => 'admin',
+                'role' => 'client',
             ],
             [
                 'numero' => '0330000001',
@@ -20,12 +20,12 @@ class UserSeeder extends Seeder
                 'role' => 'client',
             ],
             [
-                'numero' => '0370000002',
+                'numero' => '0340000002',
                 'solde' => 2500.00,
                 'role' => 'client',
             ],
             [
-                'numero' => '0330000003',
+                'numero' => '0340000003',
                 'solde' => null,
                 'role' => 'client',
             ],

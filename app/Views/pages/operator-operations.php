@@ -38,6 +38,7 @@
         .input-field:focus { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15,118,110,0.2); }
         .alert-success { background: #d1fae5; color: #065f46; padding: 12px 16px; border-radius: 12px; border: 1px solid #a7f3d0; margin-bottom: 16px; }
         .alert-error { background: #fee2e2; color: #991b1b; padding: 12px 16px; border-radius: 12px; border: 1px solid #fca5a5; margin-bottom: 16px; }
+        .info-badge { background: #dbeafe; color: #1e40af; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -53,6 +54,8 @@
             <a href="<?= base_url('admin/dashboard') ?>" class="nav-item">Dashboard</a>
             <a href="<?= base_url('admin/prefixe') ?>" class="nav-item">Préfixes</a>
             <a href="<?= base_url('admin/bareme-frais') ?>" class="nav-item active">Opérations & Frais</a>
+            <a href="<?= base_url('operator/gains') ?>" class="nav-item">Gains</a>
+            <a href="<?= base_url('operator/clients') ?>" class="nav-item">Clients</a>
         </nav>
         <a href="<?= base_url('logout') ?>" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
@@ -60,7 +63,7 @@
         </a>
     </aside>
 
-    <!-- Mobile Header & Nav -->
+    <!-- Mobile Nav -->
     <header class="lg:hidden bg-white border-b border-slate-100 px-4 py-3 sticky top-0 z-30 flex items-center justify-between">
         <div class="flex items-center gap-2">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
@@ -76,8 +79,11 @@
         <a href="<?= base_url('admin/dashboard') ?>"><button class="mobile-nav-item">Dashboard</button></a>
         <a href="<?= base_url('admin/prefixe') ?>"><button class="mobile-nav-item">Préfixes</button></a>
         <a href="<?= base_url('admin/bareme-frais') ?>"><button class="mobile-nav-item active">Frais</button></a>
+        <a href="<?= base_url('operator/gains') ?>"><button class="mobile-nav-item">Gains</button></a>
+        <a href="<?= base_url('operator/clients') ?>"><button class="mobile-nav-item">Clients</button></a>
     </nav>
 
+    <!-- Main Content -->
     <main class="lg:ml-64 p-4 sm:p-6 lg:p-8 max-w-6xl">
         <div class="space-y-6">
             <!-- Messages flash -->
@@ -90,18 +96,8 @@
 
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">Opérations & Frais</h1>
-                <p class="text-slate-500 mt-1">Configurez les types d'opérations et leurs barèmes de frais</p>
-            </div>
-
-            <!-- Sélecteur d'opérateur -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Filtrer par opérateur</label>
-                <select id="operateurSelect" class="w-full md:w-64 px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
-                    <option value="all">Tous les opérateurs</option>
-                    <?php foreach ($operateurs as $operateur): ?>
-                        <option value="<?= $operateur['id'] ?>"><?= esc($operateur['operateur']) ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <p class="text-slate-500 mt-1">Configurez les barèmes de frais pour l'opérateur <span class="font-semibold text-emerald-600">Telma</span></p>
+                <p class="text-xs text-slate-400 mt-1">⚠️ Les frais s'appliquent uniquement pour les clients Telma (034 / 038)</p>
             </div>
 
             <!-- Dépôt - sans frais -->
@@ -128,7 +124,7 @@
                         <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
                         </div>
-                        <div><p class="font-semibold text-slate-900">Retrait</p><p class="text-xs text-slate-500">Frais applicables</p></div>
+                        <div><p class="font-semibold text-slate-900">Retrait</p><p class="text-xs text-slate-500">Frais applicables (Telma)</p></div>
                     </div>
                     <button class="btn-primary text-sm" onclick="openModal('retrait')">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -148,10 +144,10 @@
                     if ($bareme['id_type_operation'] == $retraitId) {
                         $hasRetrait = true;
                         ?>
-                        <div class="bracket-item" data-operateur="<?= $bareme['id_operateur'] ?? '' ?>">
+                        <div class="bracket-item">
                             <div class="flex-1 min-w-0">
                                 <p class="font-medium text-slate-900"><?= number_format($bareme['min'], 0, ',', ' ') ?> - <?= number_format($bareme['max'], 0, ',', ' ') ?> Ar</p>
-                                <p class="text-xs text-slate-500"><?= esc($bareme['operateur'] ?? 'Inconnu') ?></p>
+                                <p class="text-xs text-slate-500"><?= esc($bareme['operateur'] ?? 'Telma') ?></p>
                             </div>
                             <div class="text-right">
                                 <p class="font-semibold text-amber-600"><?= number_format($bareme['frais'], 0, ',', ' ') ?> Ar</p>
@@ -188,7 +184,7 @@
                         <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                         </div>
-                        <div><p class="font-semibold text-slate-900">Transfert</p><p class="text-xs text-slate-500">Frais applicables</p></div>
+                        <div><p class="font-semibold text-slate-900">Transfert</p><p class="text-xs text-slate-500">Frais applicables (Telma)</p></div>
                     </div>
                     <button class="btn-primary text-sm" onclick="openModal('transfert')">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -208,10 +204,10 @@
                     if ($bareme['id_type_operation'] == $transfertId) {
                         $hasTransfert = true;
                         ?>
-                        <div class="bracket-item" data-operateur="<?= $bareme['id_operateur'] ?? '' ?>">
+                        <div class="bracket-item">
                             <div class="flex-1 min-w-0">
                                 <p class="font-medium text-slate-900"><?= number_format($bareme['min'], 0, ',', ' ') ?> - <?= number_format($bareme['max'], 0, ',', ' ') ?> Ar</p>
-                                <p class="text-xs text-slate-500"><?= esc($bareme['operateur'] ?? 'Inconnu') ?></p>
+                                <p class="text-xs text-slate-500"><?= esc($bareme['operateur'] ?? 'Telma') ?></p>
                             </div>
                             <div class="text-right">
                                 <p class="font-semibold text-amber-600"><?= number_format($bareme['frais'], 0, ',', ' ') ?> Ar</p>
@@ -255,7 +251,9 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Opérateur</label>
                         <select name="id_operateur" id="id_operateur" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all" required>
                             <?php foreach ($operateurs as $operateur): ?>
-                                <option value="<?= $operateur['id'] ?>"><?= esc($operateur['operateur']) ?></option>
+                                <option value="<?= $operateur['id'] ?>" <?= $operateur['operateur'] == 'Telma' ? 'selected' : '' ?>>
+                                    <?= esc($operateur['operateur']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -328,16 +326,15 @@
             <?php endif; ?>
         <?php endforeach; ?>
 
-        // Ajout
         function openModal(type) {
             const title = document.getElementById('modalTitle');
             const typeInput = document.getElementById('id_type_operation');
             
             if (type === 'retrait') {
-                title.textContent = 'Nouveau barème - Retrait';
+                title.textContent = 'Nouveau barème - Retrait (Telma)';
                 typeInput.value = retraitId;
             } else if (type === 'transfert') {
-                title.textContent = 'Nouveau barème - Transfert';
+                title.textContent = 'Nouveau barème - Transfert (Telma)';
                 typeInput.value = transfertId;
             }
             
@@ -348,7 +345,6 @@
             document.getElementById('modal').classList.remove('active');
         }
 
-        // Édition
         function openEditModal(id, min, max, frais, typeOperationId, operateurId) {
             document.getElementById('editForm').action = '<?= base_url('admin/bareme-frais/update/') ?>' + id;
             document.getElementById('edit_min').value = min;
@@ -363,7 +359,6 @@
             document.getElementById('editModal').classList.remove('active');
         }
 
-        // Fermer les modals avec Echap
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
@@ -371,27 +366,11 @@
             }
         });
 
-        // Fermer en cliquant à l'extérieur
         document.getElementById('modal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeModal();
         });
         document.getElementById('editModal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeEditModal();
-        });
-
-        // Filtre par opérateur
-        document.getElementById('operateurSelect')?.addEventListener('change', function() {
-            const operateurId = this.value;
-            const items = document.querySelectorAll('.bracket-item');
-            
-            items.forEach(item => {
-                const itemOperateur = item.dataset.operateur || '';
-                if (operateurId === 'all' || itemOperateur == operateurId) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
         });
     </script>
 </body>

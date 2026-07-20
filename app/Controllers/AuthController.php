@@ -15,7 +15,6 @@ class AuthController extends BaseController
         $this->userModel = new UserModel();
         $this->prefixesModel = new PrefixesModel();
         
-        // Démarrer la session si pas déjà fait
         if (!session()->isStarted) {
             session()->start();
         }
@@ -35,39 +34,41 @@ class AuthController extends BaseController
             return $this->redirectByRole(session()->get('user')['role']);
         }
         
-        $data['prefixes'] = $this->prefixesModel->getAllPrefixesWithOperateur();
-        return view('client/login', $data);
+        return view('client/login');
     }
     
     public function clientLogin()
     {
-        $prefix = $this->request->getPost('prefix');
         $numero = $this->request->getPost('numero');
         
-       
-        if (empty($prefix) || empty($numero)) {
+        if (empty($numero)) {
             return redirect()->back()->with('error', 'Veuillez saisir un numéro valide');
         }
+
+        // ============================================
+        // VÉRIFICATION : LE NUMÉRO DOIT ÊTRE TELMA (034 ou 038)
+        // ============================================
+        $prefixesTelma = ['034', '038'];
+        $prefix = substr($numero, 0, 3);
         
-        $fullNumber = $prefix . $numero;
-        
-        
-        $prefixExists = $this->prefixesModel->prefixExists($prefix);
-        if (!$prefixExists) {
-            return redirect()->back()->with('error', 'Le préfixe ' . $prefix . ' n\'est pas valide.');
+        if (!in_array($prefix, $prefixesTelma)) {
+            return redirect()->back()->with('error', 'Seuls les numéros Telma (034/038) sont acceptés');
         }
         
+        // Vérifier que le préfixe existe dans la table prefixes
+        $prefixExists = $this->prefixesModel->prefixExists($prefix);
+        if (!$prefixExists) {
+            return redirect()->back()->with('error', 'Le préfixe ' . $prefix . ' n\'est pas configuré.');
+        }
         
-        $user = $this->userModel->findByNumero($fullNumber);
+        $user = $this->userModel->findByNumero($numero);
         if (!$user) {
             return redirect()->back()->with('error', 'Ce numéro n\'existe pas. Veuillez contacter votre opérateur.');
         }
         
-        
         if ($user['role'] !== 'client') {
             return redirect()->back()->with('error', 'Accès non autorisé. Veuillez utiliser l\'espace opérateur.');
         }
-        
        
         session()->set('user', [
             'id'     => $user['id'],
@@ -75,7 +76,6 @@ class AuthController extends BaseController
             'role'   => $user['role'],
             'solde'  => $user['solde'] ?? 0,
         ]);
-        
         
         if (!session()->get('user')) {
             return redirect()->back()->with('error', 'Erreur de session. Veuillez réessayer.');
@@ -93,7 +93,7 @@ class AuthController extends BaseController
     private function redirectByRole($role)
     {
         $urls = [
-            'admin'  => '/operator/dashboard',
+            'admin'  => '/admin/dashboard',
             'client' => '/client/dashboard',
         ];
         return redirect()->to($urls[$role] ?? '/client/dashboard');

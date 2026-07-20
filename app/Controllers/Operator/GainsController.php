@@ -28,10 +28,9 @@ class GainsController extends BaseController
     
     public function index()
     {
-        // Récupérer toutes les transactions
         $db = \Config\Database::connect();
         
-        // Récupérer toutes les transactions avec les détails des utilisateurs
+        // Récupérer toutes les transactions avec détails
         $sql = "
             SELECT h.*, 
                    u1.numero as sender_numero, 
@@ -49,7 +48,7 @@ class GainsController extends BaseController
         // Récupérer les opérateurs
         $operateurs = $this->operateurModel->findAll();
         
-        // Récupérer les préfixes pour déterminer l'opérateur de chaque client
+        // Récupérer les préfixes
         $prefixes = $this->prefixesModel->findAll();
         $prefixMap = [];
         foreach ($prefixes as $p) {
@@ -63,105 +62,126 @@ class GainsController extends BaseController
             $typeMap[$t['id']] = $t['label'];
         }
         
-        // Statistiques globales
-        $total_frais = 0;
-        $total_volume = 0;
-        $total_transactions = count($transactions);
+        // ============================================
+        // 1. GAINS TELMA (NOTRE OPÉRATEUR)
+        // ============================================
+        $gainsTelma = [
+            'total_frais' => 0,
+            'total_volume' => 0,
+            'total_transactions' => 0,
+            'clients_actifs' => 0,
+            'par_type' => []
+        ];
         
-        // Statistiques par opérateur
-        $statsOperateurs = [];
-        foreach ($operateurs as $op) {
-            $statsOperateurs[$op['id']] = [
-                'id' => $op['id'],
-                'operateur' => $op['operateur'],
-                'frais' => 0,
-                'volume' => 0,
-                'transactions' => 0,
-                'retrait_frais' => 0,
-                'retrait_volume' => 0,
-                'retrait_count' => 0,
-                'transfert_frais' => 0,
-                'transfert_volume' => 0,
-                'transfert_count' => 0,
-                'depot_volume' => 0,
-                'depot_count' => 0,
-            ];
-        }
-        
-        // Statistiques par type d'opération (global)
-        $statsType = [];
+        // Initialiser les stats par type pour Telma
         foreach ($types as $t) {
-            $statsType[$t['id']] = [
+            $gainsTelma['par_type'][$t['id']] = [
                 'label' => $t['label'],
                 'frais' => 0,
                 'volume' => 0,
-                'count' => 0,
+                'count' => 0
             ];
         }
         
-        // Parcourir les transactions
+        $clientsTelma = [];
+        
         foreach ($transactions as $tx) {
-            $typeId = $tx['type_mvt'];
-            $typeLabel = $typeMap[$typeId] ?? 'Inconnu';
-            $montant = (float)$tx['montant'];
-            $frais = (float)$tx['frais_appliques'];
+            $prefix = substr($tx['sender_numero'] ?? '', 0, 3);
+            $estTelma = in_array($prefix, ['034', '038']);
             
-            // Totaux globaux
-            $total_volume += $montant;
-            $total_frais += $frais;
-            
-            // Stats par type
-            if (isset($statsType[$typeId])) {
-                $statsType[$typeId]['volume'] += $montant;
-                $statsType[$typeId]['frais'] += $frais;
-                $statsType[$typeId]['count']++;
-            }
-            
-            // Déterminer l'opérateur du client (user1 = envoyeur)
-            if ($tx['user1']) {
-                $senderNumero = $tx['sender_numero'] ?? '';
-                $prefix = substr($senderNumero, 0, 3);
-                $operateurId = $prefixMap[$prefix] ?? null;
+            if ($estTelma) {
+                $typeId = $tx['type_mvt'];
+                $montant = (float)$tx['montant'];
+                $frais = (float)$tx['frais_appliques'];
                 
-                if ($operateurId && isset($statsOperateurs[$operateurId])) {
-                    $statsOperateurs[$operateurId]['volume'] += $montant;
-                    $statsOperateurs[$operateurId]['frais'] += $frais;
-                    $statsOperateurs[$operateurId]['transactions']++;
-                    
-                    if ($typeLabel === 'retrait') {
-                        $statsOperateurs[$operateurId]['retrait_volume'] += $montant;
-                        $statsOperateurs[$operateurId]['retrait_frais'] += $frais;
-                        $statsOperateurs[$operateurId]['retrait_count']++;
-                    } elseif ($typeLabel === 'transfert') {
-                        $statsOperateurs[$operateurId]['transfert_volume'] += $montant;
-                        $statsOperateurs[$operateurId]['transfert_frais'] += $frais;
-                        $statsOperateurs[$operateurId]['transfert_count']++;
-                    } elseif ($typeLabel === 'dépôt') {
-                        $statsOperateurs[$operateurId]['depot_volume'] += $montant;
-                        $statsOperateurs[$operateurId]['depot_count']++;
-                    }
+                $gainsTelma['total_frais'] += $frais;
+                $gainsTelma['total_volume'] += $montant;
+                $gainsTelma['total_transactions']++;
+                
+                if ($tx['user1']) {
+                    $clientsTelma[] = $tx['user1'];
+                }
+                
+                if (isset($gainsTelma['par_type'][$typeId])) {
+                    $gainsTelma['par_type'][$typeId]['frais'] += $frais;
+                    $gainsTelma['par_type'][$typeId]['volume'] += $montant;
+                    $gainsTelma['par_type'][$typeId]['count']++;
                 }
             }
         }
         
+        $gainsTelma['clients_actifs'] = count(array_unique($clientsTelma));
+        
+        // ============================================
+        // 2. GAINS AUTRES OPÉRATEURS
+        // ============================================
+        $gainsAutres = [
+            'total_frais' => 0,
+            'total_volume' => 0,
+            'total_transactions' => 0,
+            'clients_actifs' => 0,
+            'par_operateur' => []
+        ];
+        
+        // Initialiser les stats par opérateur
+        foreach ($operateurs as $op) {
+            if ($op['operateur'] != 'Telma') {
+                $gainsAutres['par_operateur'][$op['id']] = [
+                    'id' => $op['id'],
+                    'operateur' => $op['operateur'],
+                    'frais' => 0,
+                    'volume' => 0,
+                    'transactions' => 0
+                ];
+            }
+        }
+        
+        $clientsAutres = [];
+        
+        foreach ($transactions as $tx) {
+            $prefix = substr($tx['sender_numero'] ?? '', 0, 3);
+            $estTelma = in_array($prefix, ['034', '038']);
+            
+            if (!$estTelma) {
+                $typeId = $tx['type_mvt'];
+                $montant = (float)$tx['montant'];
+                $frais = (float)$tx['frais_appliques'];
+                
+                $gainsAutres['total_frais'] += $frais;
+                $gainsAutres['total_volume'] += $montant;
+                $gainsAutres['total_transactions']++;
+                
+                if ($tx['user1']) {
+                    $clientsAutres[] = $tx['user1'];
+                }
+                
+                // Trouver l'opérateur correspondant
+                $operateurId = $prefixMap[$prefix] ?? null;
+                if ($operateurId && isset($gainsAutres['par_operateur'][$operateurId])) {
+                    $gainsAutres['par_operateur'][$operateurId]['frais'] += $frais;
+                    $gainsAutres['par_operateur'][$operateurId]['volume'] += $montant;
+                    $gainsAutres['par_operateur'][$operateurId]['transactions']++;
+                }
+            }
+        }
+        
+        $gainsAutres['clients_actifs'] = count(array_unique($clientsAutres));
+        
         // Supprimer les opérateurs sans transactions
-        $statsOperateurs = array_filter($statsOperateurs, function($op) {
+        $gainsAutres['par_operateur'] = array_filter($gainsAutres['par_operateur'], function($op) {
             return $op['transactions'] > 0;
         });
         
-        // Classer les opérateurs par frais collectés
-        usort($statsOperateurs, function($a, $b) {
+        // Classer par frais
+        usort($gainsAutres['par_operateur'], function($a, $b) {
             return $b['frais'] - $a['frais'];
         });
         
         $data = [
             'transactions' => $transactions,
             'operateurs' => $operateurs,
-            'statsOperateurs' => $statsOperateurs,
-            'statsType' => $statsType,
-            'total_frais' => $total_frais,
-            'total_volume' => $total_volume,
-            'total_transactions' => $total_transactions,
+            'gainsTelma' => $gainsTelma,
+            'gainsAutres' => $gainsAutres,
             'title' => 'Rapport des gains'
         ];
         
