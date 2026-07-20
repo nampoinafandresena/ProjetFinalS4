@@ -6,6 +6,12 @@ CREATE TABLE user (
     role TEXT DEFAULT 'client' CHECK (role IN ('admin', 'client'))
 );
 
+-- Table des prefixes
+CREATE TABLE prefixes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prefixes TEXT UNIQUE NOT NULL
+);
+
 -- Table des types d'opération
 CREATE TABLE type_operation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
