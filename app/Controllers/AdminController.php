@@ -95,7 +95,7 @@ class AdminController extends BaseController
     }
 
     // ============================================
-    // BARÈME FRAIS
+    // BARÈME FRAIS (UNIQUEMENT TELMA)
     // ============================================
 
     public function baremeFrais()
@@ -104,7 +104,16 @@ class AdminController extends BaseController
         $typeModel = new TypeOperationModel();
         $operateurModel = new OperateurModel();
 
+        // Récupérer l'ID de Telma
+        $telma = $operateurModel->where('operateur', 'Telma')->first();
+        $telmaId = $telma['id'] ?? null;
+
+        // Filtrer les barèmes pour ne garder que Telma
         $baremes = $baremeModel->getAllBaremesWithDetails();
+        $baremes = array_filter($baremes, function($b) use ($telmaId) {
+            return $b['id_operateur'] == $telmaId;
+        });
+
         $types = $typeModel->findAll();
         $operateurs = $operateurModel->findAll();
 
@@ -253,5 +262,4 @@ class AdminController extends BaseController
 
         return view('pages/operator-clients', $data);
     }
-
 }

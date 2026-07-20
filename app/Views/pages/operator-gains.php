@@ -24,6 +24,9 @@
         .op-stat-card { padding: 24px; border-radius: 24px; background: white; border: 1px solid #f1f5f9; }
         .btn-ghost { background: transparent; color: #475569; padding: 8px 12px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-ghost:hover { background: #f1f5f9; }
+        .section-divider { border: none; border-top: 2px dashed #e2e8f0; margin: 32px 0; }
+        .badge-telma { background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-other { background: #e2e8f0; color: #475569; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -72,108 +75,141 @@
         <div class="space-y-6">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">Rapport des gains</h1>
-                <p class="text-slate-500 mt-1">Analyse des frais collectés par l'opérateur</p>
+                <p class="text-slate-500 mt-1">Analyse des frais collectés - Séparés par opérateur</p>
             </div>
 
-            <!-- Statistiques globales -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="stat-card">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <!-- ============================================ -->
+            <!-- SECTION : GAINS TELMA (NOTRE OPÉRATEUR)       -->
+            <!-- ============================================ -->
+            <div class="relative">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                     </div>
-                    <p class="text-sm text-slate-500 font-medium">Frais totaux collectés</p>
-                    <p class="text-2xl font-bold text-slate-900"><?= number_format($total_frais ?? 0, 0, ',', ' ') ?> Ar</p>
+                    <h2 class="text-xl font-bold text-slate-900">Gains Telma <span class="badge-telma">Notre opérateur</span></h2>
                 </div>
-                <div class="stat-card">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="stat-card">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Frais collectés</p>
+                        <p class="text-2xl font-bold text-emerald-600"><?= number_format($gainsTelma['total_frais'] ?? 0, 0, ',', ' ') ?> Ar</p>
                     </div>
-                    <p class="text-sm text-slate-500 font-medium">Volume total</p>
-                    <p class="text-2xl font-bold text-slate-900"><?= number_format($total_volume ?? 0, 0, ',', ' ') ?> Ar</p>
-                </div>
-                <div class="stat-card">
-                    <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <div class="stat-card">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Volume total</p>
+                        <p class="text-2xl font-bold text-slate-900"><?= number_format($gainsTelma['total_volume'] ?? 0, 0, ',', ' ') ?> Ar</p>
                     </div>
-                    <p class="text-sm text-slate-500 font-medium">Transactions</p>
-                    <p class="text-2xl font-bold text-slate-900"><?= $total_transactions ?? 0 ?></p>
-                </div>
-                <div class="stat-card">
-                    <div class="w-12 h-12 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <div class="stat-card">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Transactions</p>
+                        <p class="text-2xl font-bold text-slate-900"><?= $gainsTelma['total_transactions'] ?? 0 ?></p>
                     </div>
-                    <p class="text-sm text-slate-500 font-medium">Clients actifs</p>
-                    <p class="text-2xl font-bold text-slate-900"><?= count(array_unique(array_column($transactions ?? [], 'user1'))) ?></p>
+                    <div class="stat-card">
+                        <div class="w-12 h-12 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Clients actifs</p>
+                        <p class="text-2xl font-bold text-slate-900"><?= $gainsTelma['clients_actifs'] ?? 0 ?></p>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Gains par opérateur -->
-            <h2 class="text-xl font-bold text-slate-900 mt-8">Gains par opérateur</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <?php if (!empty($statsOperateurs)): ?>
-                    <?php foreach ($statsOperateurs as $op): ?>
+                <!-- Détails par type -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+                    <?php foreach ($gainsTelma['par_type'] ?? [] as $type): ?>
                         <div class="op-stat-card">
+                            <p class="font-semibold text-slate-900 capitalize"><?= esc($type['label']) ?></p>
+                            <div class="mt-4 space-y-3">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-slate-500">Transactions</span>
+                                    <span class="font-semibold text-slate-900"><?= $type['count'] ?></span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-slate-500">Volume</span>
+                                    <span class="font-semibold text-slate-900"><?= number_format($type['volume'], 0, ',', ' ') ?> Ar</span>
+                                </div>
+                                <div class="flex justify-between text-sm pt-3 border-t border-slate-100">
+                                    <span class="text-slate-500">Frais collectés</span>
+                                    <span class="font-bold text-amber-600"><?= number_format($type['frais'], 0, ',', ' ') ?> Ar</span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Séparateur -->
+            <hr class="section-divider" />
+
+            <!-- ============================================ -->
+            <!-- SECTION : GAINS AUTRES OPÉRATEURS             -->
+            <!-- ============================================ -->
+            <div class="relative">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-900">Gains Autres Opérateurs <span class="badge-other">Orange / Airtel</span></h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="stat-card opacity-75">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Frais collectés</p>
+                        <p class="text-2xl font-bold text-slate-400"><?= number_format($gainsAutres['total_frais'] ?? 0, 0, ',', ' ') ?> Ar</p>
+                    </div>
+                    <div class="stat-card opacity-75">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Volume total</p>
+                        <p class="text-2xl font-bold text-slate-400"><?= number_format($gainsAutres['total_volume'] ?? 0, 0, ',', ' ') ?> Ar</p>
+                    </div>
+                    <div class="stat-card opacity-75">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Transactions</p>
+                        <p class="text-2xl font-bold text-slate-400"><?= $gainsAutres['total_transactions'] ?? 0 ?></p>
+                    </div>
+                    <div class="stat-card opacity-75">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">Clients actifs</p>
+                        <p class="text-2xl font-bold text-slate-400"><?= $gainsAutres['clients_actifs'] ?? 0 ?></p>
+                    </div>
+                </div>
+                <!-- Détails par opérateur -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+                    <?php foreach ($gainsAutres['par_operateur'] ?? [] as $op): ?>
+                        <div class="op-stat-card opacity-75">
                             <div class="flex items-center justify-between">
                                 <p class="font-semibold text-slate-900"><?= esc($op['operateur']) ?></p>
-                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full"><?= $op['transactions'] ?> transactions</span>
+                                <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full"><?= $op['transactions'] ?> transactions</span>
                             </div>
                             <div class="mt-4 space-y-3">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-slate-500">Frais totaux</span>
-                                    <span class="font-bold text-amber-600"><?= number_format($op['frais'], 0, ',', ' ') ?> Ar</span>
+                                    <span class="font-bold text-slate-400"><?= number_format($op['frais'], 0, ',', ' ') ?> Ar</span>
                                 </div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-slate-500">Volume</span>
                                     <span class="font-semibold text-slate-900"><?= number_format($op['volume'], 0, ',', ' ') ?> Ar</span>
                                 </div>
-                                <div class="pt-3 border-t border-slate-100">
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500">Retrait (frais)</span>
-                                        <span class="font-semibold text-rose-600"><?= number_format($op['retrait_frais'], 0, ',', ' ') ?> Ar</span>
-                                    </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500">Transfert (frais)</span>
-                                        <span class="font-semibold text-sky-600"><?= number_format($op['transfert_frais'], 0, ',', ' ') ?> Ar</span>
-                                    </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500">Dépôt (volume)</span>
-                                        <span class="font-semibold text-emerald-600"><?= number_format($op['depot_volume'], 0, ',', ' ') ?> Ar</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="col-span-3 text-center text-slate-400 py-8">
-                        Aucune donnée de gain disponible
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Statistiques par type d'opération -->
-            <h2 class="text-xl font-bold text-slate-900 mt-8">Statistiques par type d'opération</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <?php foreach ($statsType as $type): ?>
-                    <div class="op-stat-card">
-                        <p class="font-semibold text-slate-900 capitalize"><?= esc($type['label']) ?></p>
-                        <div class="mt-4 space-y-3">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-slate-500">Transactions</span>
-                                <span class="font-semibold text-slate-900"><?= $type['count'] ?></span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-slate-500">Volume</span>
-                                <span class="font-semibold text-slate-900"><?= number_format($type['volume'], 0, ',', ' ') ?> Ar</span>
-                            </div>
-                            <div class="flex justify-between text-sm pt-3 border-t border-slate-100">
-                                <span class="text-slate-500">Frais collectés</span>
-                                <span class="font-bold <?= $type['label'] == 'dépôt' ? 'text-emerald-600' : 'text-amber-600' ?>">
-                                    <?= number_format($type['frais'], 0, ',', ' ') ?> Ar
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                </div>
             </div>
 
             <!-- Toutes les transactions -->
@@ -191,6 +227,7 @@
                                 <th class="px-6 py-3 text-right">Montant</th>
                                 <th class="px-6 py-3 text-right">Frais</th>
                                 <th class="px-6 py-3 text-right">Bénéficiaire</th>
+                                <th class="px-6 py-3 text-right">Opérateur</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -215,11 +252,25 @@
                                         <td class="px-6 py-4 text-sm text-slate-600 text-right">
                                             <?= esc($tx['receiver_numero'] ?? '-') ?>
                                         </td>
+                                        <td class="px-6 py-4 text-sm text-slate-600 text-right">
+                                            <?php 
+                                                $prefix = substr($tx['sender_numero'] ?? '', 0, 3);
+                                                if (in_array($prefix, ['034', '038'])) {
+                                                    echo '<span class="text-emerald-600 font-semibold">Telma</span>';
+                                                } elseif (in_array($prefix, ['033', '037'])) {
+                                                    echo '<span class="text-orange-600 font-semibold">Orange</span>';
+                                                } elseif (in_array($prefix, ['032', '039'])) {
+                                                    echo '<span class="text-blue-600 font-semibold">Airtel</span>';
+                                                } else {
+                                                    echo '<span class="text-slate-400">-</span>';
+                                                }
+                                            ?>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="px-6 py-8 text-center text-slate-400">
+                                    <td colspan="7" class="px-6 py-8 text-center text-slate-400">
                                         Aucune transaction
                                     </td>
                                 </tr>
