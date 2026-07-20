@@ -8,10 +8,11 @@ ETU004017 - ETU004255
     - operateur (id, numero: 0335261, solde)
     - type_operation(id, label) (dépôt, retrait, transfert)
     - bareme_frais(id, min, max, frais) -> switch case
-    - historiques(id_operateur, type_mvt, montant, date_transaction )
+    - historiques(id_operateur, type_mvt, montant, date_transaction)
 
 - Cote operateur
     - configuration des préfixes valable de l’opérateur (ex: 033 et 037)
+
 
 - Cote client
     - login automatique
