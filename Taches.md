@@ -36,6 +36,11 @@ ETU004017 - ETU004255
         - situation globale
             - solde
             - transactions (historiques)
+V2
+    - Configuration % en plus de commissions pour les transferts vers les autres opérateurs 
+    - Sur la page “Situation gain via les différents frais” , séparer opérateur et autres opérateurs
+    - Situation des montants à envoyer à chaque opérateur
+
 
 - Cote client
     - login automatique
@@ -48,3 +53,10 @@ ETU004017 - ETU004255
         - faire un transfert
         - voir les historiques
         
+V2
+- Option inclure frais de retrait lors de l’envoi il n’y a pas de frais de retrait pour les autres opérateurs
+- Envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro)
+même opérateur uniquement
+
+
+- avadika 0.0 le solde voalohany ao amin ny seeder amin ny farany

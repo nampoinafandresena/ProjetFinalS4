@@ -16,17 +16,19 @@
         .btn-primary { background: #0f766e; color: white; padding: 14px 28px; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover { background: #0d6b63; transform: scale(0.98); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .input-field { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; font-weight: 500; transition: all 0.2s; }
+        .input-field { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; font-weight: 500; transition: all 0.2s; font-size: 18px; letter-spacing: 2px; }
         .input-field:focus { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.2); }
-        .demo-account { padding: 8px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.2s; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .demo-account:hover { background: #ecfdf5; border-color: #0f766e; }
-        .demo-account:hover .demo-tag { opacity: 1; }
-        .demo-tag { opacity: 0; font-size: 12px; font-weight: 600; color: #0f766e; transition: opacity 0.2s; }
         .alert-error { background: #fee2e2; color: #991b1b; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border: 1px solid #fecaca; }
         .alert-success { background: #d1fae5; color: #065f46; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border: 1px solid #a7f3d0; }
         .btn-back { background: transparent; color: #475569; padding: 8px 16px; border-radius: 10px; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
         .btn-back:hover { background: #f1f5f9; }
+        .demo-account { padding: 8px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.2s; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .demo-account:hover { background: #ecfdf5; border-color: #0f766e; }
+        .demo-account:hover .demo-tag { opacity: 1; }
+        .demo-tag { opacity: 0; font-size: 12px; font-weight: 600; color: #0f766e; transition: opacity 0.2s; }
         .badge-operateur { background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+        .prefix-hint { font-size: 14px; color: #64748b; margin-top: 4px; }
+        .prefix-hint span { font-weight: 700; color: #0f766e; }
     </style>
 </head>
 <body>
@@ -50,7 +52,8 @@
                     </svg>
                 </div>
                 <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Espace Client</h1>
-                <p class="text-slate-500 mt-2 text-center">Connectez-vous avec votre numéro</p>
+                <p class="text-slate-500 mt-2 text-center">Entrez votre numéro de téléphone</p>
+                <p class="text-xs text-slate-400 mt-1">📱 Uniquement les numéros <span class="font-bold text-emerald-600">Telma (034 / 038)</span></p>
             </div>
 
             <!-- Messages Flash -->
@@ -80,18 +83,15 @@
                     <div class="space-y-5">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Numéro de téléphone</label>
-                            <div class="flex gap-2">
-                                <select name="prefix" id="prefix" class="px-3 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
-                                    <?php foreach ($prefixes as $p): ?>
-                                        <option value="<?= $p['prefixes'] ?>">
-                                            <?= $p['prefixes'] ?> 
-                                            <span class="badge-operateur"><?= $p['operateur'] ?? 'Opérateur' ?></span>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <input type="tel" name="numero" id="numero" placeholder="1234567" maxlength="7" class="flex-1 input-field" oninput="this.value=this.value.replace(/\D/g,'')" required />
-                            </div>
-                            <p class="text-xs text-slate-400 mt-2">📱 Entrez un numéro existant - Les comptes sont pré-créés</p>
+                            <input type="tel" 
+                                   name="numero" 
+                                   id="numero" 
+                                   placeholder="0341234567" 
+                                   maxlength="10" 
+                                   class="input-field" 
+                                   oninput="this.value=this.value.replace(/\D/g,'')" 
+                                   required />
+                            <p class="prefix-hint mt-2">Doit commencer par <span>034</span> ou <span>038</span> (Telma)</p>
                         </div>
 
                         <button type="submit" class="btn-primary" id="loginBtn">
@@ -103,27 +103,27 @@
                     </div>
                 </form>
 
-                <!-- Comptes de démonstration -->
+                <!-- Comptes de démonstration Telma uniquement -->
                 <div class="mt-6 pt-6 border-t border-slate-100">
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Comptes de démonstration</p>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Comptes de démonstration Telma</p>
                     <div class="grid grid-cols-1 gap-2">
-                        <div class="demo-account" onclick="fillDemo('033','0000001')">
+                        <div class="demo-account" onclick="fillDemo('0383833838')">
                             <div>
-                                <span class="text-sm font-semibold text-slate-900">0330000001</span>
-                                <p class="text-xs text-slate-500">Client - 5 000 Ar</p>
+                                <span class="text-sm font-semibold text-slate-900">0383833838</span>
+                                <p class="text-xs text-slate-500">Client - 0</p>
                             </div>
                             <span class="demo-tag">Utiliser</span>
                         </div>
-                        <div class="demo-account" onclick="fillDemo('037','000002')">
+                        <div class="demo-account" onclick="fillDemo('0380000002')">
                             <div>
-                                <span class="text-sm font-semibold text-slate-900">037000002</span>
+                                <span class="text-sm font-semibold text-slate-900">0340000002</span>
                                 <p class="text-xs text-slate-500">Client - 2 500 Ar</p>
                             </div>
                             <span class="demo-tag">Utiliser</span>
                         </div>
-                        <div class="demo-account" onclick="fillDemo('033','0000003')">
+                        <div class="demo-account" onclick="fillDemo('0340000003')">
                             <div>
-                                <span class="text-sm font-semibold text-slate-900">0330000003</span>
+                                <span class="text-sm font-semibold text-slate-900">0340000003</span>
                                 <p class="text-xs text-slate-500">Client - 0 Ar</p>
                             </div>
                             <span class="demo-tag">Utiliser</span>
@@ -134,7 +134,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
-                            ⚠️ Seuls les comptes existants peuvent se connecter
+                            ⚠️ Seuls les numéros Telma (034/038) peuvent se connecter
                         </p>
                     </div>
                 </div>
@@ -143,8 +143,7 @@
     </div>
 
     <script>
-        function fillDemo(prefix, phone) {
-            document.getElementById('prefix').value = prefix;
+        function fillDemo(phone) {
             document.getElementById('numero').value = phone;
             document.getElementById('loginForm').submit();
         }

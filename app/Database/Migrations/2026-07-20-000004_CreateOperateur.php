@@ -21,6 +21,13 @@ class CreateOperateur extends Migration
                 'unique' => true,
                 'null' => false,
             ],
+
+            'commission' => [
+                'type' => 'DECIMAL',
+                'constraint' => '5,2',
+                'default' => 0.00,
+                'null' => false,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

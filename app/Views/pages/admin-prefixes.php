@@ -143,11 +143,39 @@
                                 </p>
                                 <p class="text-xs text-slate-500"><?= esc($prefix['operateur'] ?? 'Inconnu') ?></p>
                             </div>
-                            <form action="<?= base_url('admin/prefixe/toggle/' . $prefix['id']) ?>" method="POST" class="inline">
-                                <button type="submit" class="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors" title="Activer/Désactiver">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                            
+                            <form action="<?= base_url('admin/prefixe/delete/' . $prefix['id']) ?>" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce préfixe ?')">
+                                <button type="submit" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Supprimer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             </form>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="text-center py-12 text-slate-500">
+                        <p>Aucun préfixe configuré</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                    <h2 class="font-semibold text-slate-900">Liste des préfixes des autres Opérateurs</h2>
+                </div>
+                
+                <?php if (!empty($otherPrefixes)): ?>
+                    <?php foreach ($otherPrefixes as $prefix): ?>
+                        <div class="prefix-item">
+                            <div class="w-12 h-12 rounded-2xl <?= ($prefix['actif'] ?? 1) ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400' ?> flex items-center justify-center font-bold text-lg">
+                                <?= esc($prefix['prefixes']) ?>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold <?= ($prefix['actif'] ?? 1) ? 'text-slate-900' : 'text-slate-400' ?>">
+                                    +<?= esc($prefix['prefixes']) ?>
+                                </p>
+                                <p class="text-xs text-slate-500"><?= esc($prefix['operateur'] ?? 'Inconnu') ?></p>
+                            </div>
+                            
                             <form action="<?= base_url('admin/prefixe/delete/' . $prefix['id']) ?>" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce préfixe ?')">
                                 <button type="submit" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Supprimer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
