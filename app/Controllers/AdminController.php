@@ -47,11 +47,13 @@ class AdminController extends BaseController
     {
         $prefixModel = new PrefixesModel();
         $operateurModel = new OperateurModel();
-        $listPrefixes = $prefixModel->getPrefixesWithOperateur();
+        $listPrefixes = $prefixModel->getPrefixesWithOperateur(3);
+        $listPrefixesOtherOperateurs = $prefixModel->getPrefixesByOperateurWithOperateur(3);
         $listAllOperateurs = $operateurModel->getAllOperateurs();
 
         $data = [
             'prefixes' => $listPrefixes,
+            'otherPrefixes' => $listPrefixesOtherOperateurs,
             'total' => count($listPrefixes),
             'actifs' => $this->countActifs($listPrefixes),
             'inactifs' => $this->countInactifs($listPrefixes),
@@ -74,15 +76,6 @@ class AdminController extends BaseController
 
         $prefixModel->save($input);
         return redirect()->to('/admin/prefixe')->with('success', 'Préfixe ajouté avec succès.');
-    }
-
-    public function togglePrefix($id)
-    {
-        $prefixModel = new PrefixesModel();
-        if ($prefixModel->togglePrefix($id)) {
-            return redirect()->to('/admin/prefixe')->with('success', 'Préfixe activé/désactivé avec succès');
-        }
-        return redirect()->to('/admin/prefixe')->with('error', 'Erreur lors de la modification');
     }
 
     public function deletePrefix($id)
@@ -290,18 +283,5 @@ class AdminController extends BaseController
         }
         return $stats;
     }
-
-    // public function clients()
-    // {
-    //     $userModel = new UserModel();
-    //     $clients = $userModel->getClients();
-
-    //     $data = [
-    //         'clients' => $clients,
-    //         'title' => 'Liste des clients'
-    //     ];
-
-    //     return view('pages/operator-clients', $data);
-    // }
 
 }
