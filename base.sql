@@ -9,7 +9,8 @@ CREATE TABLE user (
 -- Table des opérateurs
 CREATE TABLE operateur (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    operateur TEXT UNIQUE NOT NULL
+    operateur TEXT UNIQUE NOT NULL,
+    commission REAL DEFAULT 0.0
 );
 
 -- Table des préfixes 
@@ -27,7 +28,7 @@ CREATE TABLE type_operation (
 );
 
 -- Table du barème des frais
-CREATE TABLE bareme_frais_details (
+CREATE TABLE bareme_frais (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     min REAL NOT NULL,
     max REAL NOT NULL,
