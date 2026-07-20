@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftPay - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f9f9fc; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-item.active {
+            background: #dee0ff;
+            color: #00105c;
+            border-radius: 8px;
+            font-weight: 700;
+            transform: scale(0.95);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            color: #454652;
+            transition: all 0.2s;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .sidebar-item:hover {
+            background: #f3f3f6;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, #24389c 0%, #3f51b5 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-white border-r border-gray-200 p-4 space-y-4 z-50">
+        <div class="mb-4 px-2">
+            <span class="text-xl font-bold text-blue-700">SwiftPay</span>
+        </div>
+        <div class="flex items-center gap-4 mb-4 px-2">
+            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white overflow-hidden">
+                <span class="material-symbols-outlined">person</span>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-800">0331234567</p>
+                <p class="text-xs text-gray-500">Administrateur</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 flex flex-col gap-1">
+            <a class="sidebar-item active" href="#">
+                <span class="material-symbols-outlined">home</span>
+                <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a class="sidebar-item" href="#">
+                <span class="material-symbols-outlined">swap_horiz</span>
+                <span class="text-sm font-medium">Opérations</span>
+            </a>
+            <a class="sidebar-item" href="#">
+                <span class="material-symbols-outlined">history</span>
+                <span class="text-sm font-medium">Historique</span>
+            </a>
+            <a class="sidebar-item" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Administration</span>
+            </a>
+        </nav>
+        
+        <div class="mt-auto border-t border-gray-200 pt-4">
+            <a class="sidebar-item" href="#">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="text-sm font-medium">Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Top Bar -->
+    <header class="md:ml-64 h-16 flex justify-between items-center px-6 border-b border-gray-200 bg-white shadow-sm sticky top-0 z-40">
+        <div class="flex items-center gap-2">
+            <span class="text-xl font-bold text-blue-700">Dashboard</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="relative hidden sm:block">
+                <input class="pl-10 pr-4 py-2 bg-gray-50 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-600 w-64 transition-all" placeholder="Rechercher..." type="text"/>
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">search</span>
+            </div>
+            <button class="p-2 text-gray-600 hover:text-blue-700 transition-colors">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="md:ml-64 p-6 min-h-[calc(100vh-64px)] pb-32 md:pb-12">
+        <div class="max-w-7xl mx-auto space-y-6">
+
+            <!-- Hero Balance -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 balance-card rounded-xl p-8 text-white relative overflow-hidden shadow-lg flex flex-col justify-between">
+                    <div class="relative z-10">
+                        <p class="text-sm font-semibold opacity-80 mb-2">Solde disponible</p>
+                        <h1 class="text-5xl font-bold tracking-tight">1 450 200 <span class="text-xl opacity-70">Ar</span></h1>
+                    </div>
+                    <div class="mt-6 flex items-center gap-4 relative z-10">
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-green-400">trending_up</span>
+                            <span class="text-sm font-semibold">+4.2% ce mois</span>
+                        </div>
+                        <div class="h-4 w-px bg-white opacity-20"></div>
+                        <p class="text-sm opacity-80">Dernière mise à jour : 10:45</p>
+                    </div>
+                    <div class="absolute -right-16 -top-16 w-64 h-64 bg-blue-400 opacity-20 rounded-full blur-3xl"></div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="lg:col-span-5 grid grid-cols-3 gap-4">
+                    <a href="#" class="flex flex-col items-center justify-center gap-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-700 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">add_circle</span>
+                        </div>
+                        <span class="text-xs font-medium text-gray-800">Dépôt</span>
+                    </a>
+                    <a href="#" class="flex flex-col items-center justify-center gap-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-700 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">upload</span>
+                        </div>
+                        <span class="text-xs font-medium text-gray-800">Retrait</span>
+                    </a>
+                    <a href="#" class="flex flex-col items-center justify-center gap-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">send</span>
+                        </div>
+                        <span class="text-xs font-medium text-gray-800">Transfert</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total des gains</p>
+                        <h3 class="text-3xl font-bold text-blue-700">2 482 100 Ar</h3>
+                        <p class="text-sm text-green-600 mt-2 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">trending_up</span> +12.4% vs mois dernier
+                        </p>
+                    </div>
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-700">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Transactions</p>
+                        <h3 class="text-3xl font-bold text-blue-700">1 284</h3>
+                        <p class="text-sm text-green-600 mt-2 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">sync</span> +42 ce mois
+                        </p>
+                    </div>
+                    <div class="p-2 bg-green-50 rounded-lg text-green-700">
+                        <span class="material-symbols-outlined">swap_horiz</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Clients actifs</p>
+                        <h3 class="text-3xl font-bold text-blue-700">48 290</h3>
+                        <p class="text-sm text-green-600 mt-2 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">group_add</span> +842 aujourd'hui
+                        </p>
+                    </div>
+                    <div class="p-2 bg-purple-50 rounded-lg text-purple-700">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                    <h2 class="text-lg font-semibold text-gray-800">Dernières transactions</h2>
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-blue-700 border border-blue-700 rounded-lg text-xs font-medium hover:bg-blue-50 transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        Voir tout
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Type</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Bénéficiaire</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Montant</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Frais</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-sm text-gray-800">24/10/2023 14:30</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-[20px] text-green-700">add_circle</span>
+                                        </div>
+                                        <span class="text-sm">Dépôt</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm">Compte personnel</td>
+                                <td class="px-6 py-4 font-mono text-sm text-green-600">+ 500 000 Ar</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">0 Ar</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Complété</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-sm text-gray-800">24/10/2023 12:15</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-[20px] text-blue-700">send</span>
+                                        </div>
+                                        <span class="text-sm">Transfert</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm">Jean Rakoto</td>
+                                <td class="px-6 py-4 font-mono text-sm text-red-600">- 150 000 Ar</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">200 Ar</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Complété</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-sm text-gray-800">23/10/2023 09:45</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-[20px] text-red-700">upload</span>
+                                        </div>
+                                        <span class="text-sm">Retrait</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm">ATM Fianarantsoa</td>
+                                <td class="px-6 py-4 font-mono text-sm text-red-600">- 100 000 Ar</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">50 Ar</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">En attente</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4 bg-white border-t border-gray-200 shadow-lg z-50">
+        <a class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-full px-4 py-1 scale-90" href="#">
+            <span class="material-symbols-outlined">home</span>
+            <span class="text-xs font-medium">Accueil</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-gray-600" href="#">
+            <span class="material-symbols-outlined">swap_horiz</span>
+            <span class="text-xs font-medium">Opérations</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-gray-600" href="#">
+            <span class="material-symbols-outlined">history</span>
+            <span class="text-xs font-medium">Historique</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-gray-600" href="#">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="text-xs font-medium">Déconnexion</span>
+        </a>
+    </nav>
+</body>
+</html>
