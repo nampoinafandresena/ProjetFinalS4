@@ -10,6 +10,9 @@ ETU004017 - ETU004255
     - bareme_frais(id, min, max, frais) -> switch case
     - historiques(id_operateur, type_mvt, montant, date_transaction)
 
+- Model
+    - model par tables
+
 - Cote operateur
     - configuration des préfixes valable de l’opérateur (ex: 033 et 037)
 
