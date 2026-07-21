@@ -5,7 +5,14 @@ CREATE TABLE user (
     solde REAL DEFAULT 0.0,
     role TEXT DEFAULT 'client' CHECK (role IN ('admin', 'client'))
 );
- 
+
+CREATE TABLE promotion_transfert (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    promotion REAL DEFAULT 0.0
+);
+INSERT INTO promotion_transfert (promotion) VALUES 
+    (0.1);
+    
 -- Table des opérateurs
 CREATE TABLE operateur (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -9,6 +9,7 @@ use App\Models\BaremeFraisModel;
 use App\Models\TypeOperationModel;
 use App\Models\PrefixesModel;
 use App\Models\OperateurModel;
+use App\Models\PromotionTransfertModel;
 
 class OperationController extends BaseController
 {
@@ -18,6 +19,7 @@ class OperationController extends BaseController
     protected $typeOperationModel;
     protected $prefixesModel;
     protected $operateurModel;
+    protected $promotionTransfertModel;
     
 
     public function __construct()
@@ -28,6 +30,7 @@ class OperationController extends BaseController
         $this->typeOperationModel = new TypeOperationModel();
         $this->prefixesModel = new PrefixesModel();
         $this->operateurModel = new OperateurModel();
+        // $this->promotionTransfertModel = new PromotionTransfertModel();
     }
 
     
@@ -205,6 +208,13 @@ class OperationController extends BaseController
         
         $typeTransfert = $this->typeOperationModel->where('label', 'transfert')->first();
         $frais = $this->baremeFraisModel->calculerFrais($montant, $typeTransfert['id'], $operateurEnvoyeurId);
+
+        if ($operateurEnvoyeurId == $operateurDestinataireId ){
+            $promotion_transfert = $this->promotionTransfertModel->getPromotionTransfert();
+            // si il y a une promotion
+            // $frais = $frais * 0.1;
+            $frais = $frais * $promotion_transfert;
+        }
         
         
         // CALCULER LA COMMISSION (SEULEMENT SI AUTRE OPÉRATEUR)

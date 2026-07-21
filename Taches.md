@@ -60,3 +60,7 @@ même opérateur uniquement
 
 
 - avadika 0.0 le solde voalohany ao amin ny seeder amin ny farany
+
+
+promotion sur le frais de transport en pourcentage pour les meme operateuurs
+creer dans la base cette configuration
