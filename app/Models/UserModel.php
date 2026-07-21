@@ -73,6 +73,18 @@ class UserModel extends Model
 
     public function getClients()
     {
-        return $this->where('role', 'client')->orderBy('id', 'DESC')->findAll();
+        return $this->where('role', 'client')
+                    ->orderBy('id', 'DESC')
+                    ->findAll();
+    }
+
+    /**
+     * Récupère les clients avec pagination
+     */
+    public function getClientsPaginated($perPage = 10)
+    {
+        return $this->where('role', 'client')
+                    ->orderBy('id', 'DESC')
+                    ->paginate($perPage);
     }
 }
