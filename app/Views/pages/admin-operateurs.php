@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <title>Mobile Money - Opérateurs</title>
     <style>
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f8fafc; }
         .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 256px; background: white; border-right: 1px solid #f1f5f9; padding: 20px; display: none; flex-direction: column; z-index: 40; }
