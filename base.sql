@@ -3,7 +3,13 @@ CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     numero TEXT UNIQUE NOT NULL,
     solde REAL DEFAULT 0.0,
+    id_epargne INTEGER NOT NULL,
     role TEXT DEFAULT 'client' CHECK (role IN ('admin', 'client'))
+);
+
+create table epargne(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pourcentage REAL DEFAULT 0.0
 );
  
 -- Table des opérateurs

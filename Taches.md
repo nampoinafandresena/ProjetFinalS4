@@ -60,3 +60,8 @@ même opérateur uniquement
 
 
 - avadika 0.0 le solde voalohany ao amin ny seeder amin ny farany
+
+
+
+
+alea2 : epargne , client manana interface iteny en pourcentage epargne 50% , 50% makany aminy 50% epargne 

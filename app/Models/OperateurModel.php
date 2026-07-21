@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 class OperateurModel extends Model{
     protected $table = "operateur";
     protected $primaryKey = "id";
-    protected $allowedFields = ["operateur", "commission"];
+    protected $allowedFields = ["operateur", "commission", "epargne"];
 
     protected $returnType = 'array';
     protected $useTimestamps = false;
@@ -26,6 +26,8 @@ class OperateurModel extends Model{
     public function findByOperateur(string $operateur) {
         return $this->where('operateur', $operateur)->first();
     }
+
+   
 
     public function getAllOperateurs() {
         return $this->orderBy('operateur', 'ASC')->findAll();

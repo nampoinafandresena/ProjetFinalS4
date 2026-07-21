@@ -91,38 +91,52 @@ class DatabaseSeeder extends Seeder
             [
                 'numero' => '0000000000',
                 'solde' => null,
+                // 'id_epargne' => null,
                 'role' => 'admin',
             ],
             // Clients Telma
             [
                 'numero' => '0340000001',
                 'solde' => 0.0,
+                // 'id_epargne' => null,
+
                 'role' => 'client',
             ],
             [
                 'numero' => '0340000002',
                 'solde' => 0.0,
+                // 'id_epargne' => null,
+
                 'role' => 'client',
             ],
             [
                 'numero' => '0340000003',
                 'solde' => 0.0,
+                // 'id_epargne' => null,
+
                 'role' => 'client',
             ],
             // Client Orange (pour tester les transferts inter-opérateurs)
             [
                 'numero' => '0330000001',
                 'solde' => 0.0,
+                // 'id_epargne' => null,
+
                 'role' => 'client',
             ],
             // Client Airtel (pour tester les transferts inter-opérateurs)
             [
                 'numero' => '0390000001',
                 'solde' => 0.0,
+                // 'id_epargne' => null,
+
                 'role' => 'client',
             ],
         ];
         $this->db->table('user')->insertBatch($users);
+
+         
+        
         
     }
 }

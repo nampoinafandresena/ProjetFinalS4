@@ -27,6 +27,8 @@ class CreateUser extends Migration
                 'default' => 0.00,
                 'null' => true,
             ],
+
+           
             'role' => [
                 'type' => 'ENUM',
                 'constraint' => ['admin', 'client'],
@@ -44,6 +46,7 @@ class CreateUser extends Migration
         ]);
         
         $this->forge->addKey('id', true);
+       
         $this->forge->createTable('user');
     }
 

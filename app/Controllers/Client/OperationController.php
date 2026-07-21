@@ -63,6 +63,7 @@ class OperationController extends BaseController
             'montant' => $montant,
             'frais_appliques' => 0,
             'commission_appliquee' => 0,
+            
             'montant_total' => $montant,
             'operateur_destinataire' => null,
             'date_transaction' => date('Y-m-d H:i:s'),
@@ -163,6 +164,23 @@ class OperationController extends BaseController
     // TRANSFERT (AVEC COMMISSION SI AUTRE OPÉRATEUR)
     // ============================================
 
+    public function insertEpargne(){
+         if (!session()->get('user')) {
+            return redirect()->to('/client/login')->with('error', 'Veuillez vous connecter');
+        }
+
+        // $user = session()->get('user');
+        // $destinataire = $this->request->getPost('destinataire');
+        $montant = $this->request->getPost('montant');
+
+         if (empty($montant) || $montant <= 0) {
+            return redirect()->back()->with('error', 'Montant invalide');
+        }
+
+        $montant = (float)$montant;
+
+        $result
+    }
     public function transfert()
     {
         if (!session()->get('user')) {
@@ -223,6 +241,8 @@ class OperationController extends BaseController
         $commission = 0;
         $commissionPourcentage = 0;
         $operateurDestLabel = null;
+        $epargne = 0;
+        $epargnePourcentage = 0;
         
         if ($operateurEnvoyeurId != $operateurDestinataireId && $operateurDestinataireId) {
             // Récupérer la commission de l'opérateur destinataire
@@ -230,14 +250,31 @@ class OperationController extends BaseController
             if ($operateurDest) {
                 $commissionPourcentage = (float)$operateurDest['commission'];
                 $commission = $montant * ($commissionPourcentage / 100);
+
+
+
+                $operateurDestLabel = $operateurDest['operateur'];
+            }
+        
+        }
+
+        if($operateurEnvoyeurId == $operateurDestinataireId && $operateurDestinataireId){
+            $operateurDest = $this->operateurModel->find($operateurDestinataireId);
+            if($operateurDest){
+                $epargnePourcentage = (float)$operateurDest['epargne'];
+                $epargne = $montant * ($epargnePourcentage / 100);
+
                 $operateurDestLabel = $operateurDest['operateur'];
             }
         }
+
+
+
         
         // ============================================
         // MONTANT TOTAL À DÉBITER
         // ============================================
-        $montantTotal = $montant + $frais + $commission;
+        $montantTotal = $montant + $frais + $commission + $epargne;
         
         // Vérifier le solde
         if ($user['solde'] < $montantTotal) {
@@ -306,6 +343,28 @@ class OperationController extends BaseController
     // API : CALCULER LES FRAIS AVEC OPTION
     // ============================================
 
+    public function calculEparge(){
+         if (!session()->get('user')) {
+            return $this->response->setJSON(['error' => 'Non authentifié'], 401);
+        }
+
+        $user = session()->get('user');
+        $montant = $this->request->getPost('montant');
+        // $destinataire = $this->request->getPost('destinataire');
+        $prefix = substr($user['numero'], 0, 3);
+        $operateurData = $this->prefixesModel->where('prefixes', $prefix)->first();
+        $operateurId = $operateurData['id_operateur'] ?? null;
+        
+        if (empty($montant) || $montant <= 0) {
+            return $this->response->setJSON(['error' => 'Montant invalide', 'frais' => 0]);
+        }
+
+        $montant = (float)$montant;
+
+        
+
+        $resultat  = $this->operateurModel->update($operateur,['epargne']);
+    }
     public function calculerFrais()
     {
         if (!session()->get('user')) {
