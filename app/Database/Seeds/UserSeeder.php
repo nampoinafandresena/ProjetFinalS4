@@ -15,6 +15,11 @@ class UserSeeder extends Seeder
                 'role' => 'client',
             ],
             [
+                'numero' => '0000000000',
+                'solde' => null,
+                'role' => 'admin',
+            ],
+            [
                 'numero' => '0330000001',
                 'solde' => 5000.00,
                 'role' => 'client',
