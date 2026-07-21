@@ -19,6 +19,7 @@ class OperationController extends BaseController
     protected $prefixesModel;
     protected $operateurModel;
     
+
     public function __construct()
     {
         $this->userModel = new UserModel();
@@ -28,33 +29,33 @@ class OperationController extends BaseController
         $this->prefixesModel = new PrefixesModel();
         $this->operateurModel = new OperateurModel();
     }
-    
+
     // ============================================
     // DÉPÔT
     // ============================================
-    
+
     public function depot()
     {
         if (!session()->get('user')) {
             return redirect()->to('/client/login')->with('error', 'Veuillez vous connecter');
         }
-        
+
         $user = session()->get('user');
         $montant = $this->request->getPost('montant');
-        
+
         if (empty($montant) || $montant <= 0) {
             return redirect()->back()->with('error', 'Montant invalide');
         }
-        
+
         $montant = (float)$montant;
-        
+
         $result = $this->userModel->updateSolde($user['id'], $montant, 'add');
         if (!$result) {
             return redirect()->back()->with('error', 'Erreur lors du dépôt');
         }
-        
+
         $typeDepot = $this->typeOperationModel->where('label', 'dépôt')->first();
-        
+
         $data = [
             'user1' => $user['id'],
             'user2' => null,
@@ -66,32 +67,37 @@ class OperationController extends BaseController
             'operateur_destinataire' => null,
             'date_transaction' => date('Y-m-d H:i:s'),
         ];
-        
+
         $this->historiqueModel->insert($data);
-        
+
         $userData = $this->userModel->find($user['id']);
         session()->set('user', array_merge($user, ['solde' => $userData['solde']]));
-        
+
         return redirect()->to('/client/dashboard')->with('success', 'Dépôt de ' . number_format($montant, 0, ',', ' ') . ' Ar effectué avec succès');
     }
-    
+
     // ============================================
     // RETRAIT
     // ============================================
-    
+
+    // ============================================
+    // RETRAIT (AVEC FRAIS OPTIONNELS)
+    // ============================================
+
     public function retrait()
     {
         if (!session()->get('user')) {
             return redirect()->to('/client/login')->with('error', 'Veuillez vous connecter');
         }
-        
+
         $user = session()->get('user');
         $montant = $this->request->getPost('montant');
-        
+        $inclureFrais = $this->request->getPost('inclure_frais') ? true : false;
+
         if (empty($montant) || $montant <= 0) {
             return redirect()->back()->with('error', 'Montant invalide');
         }
-        
+
         $montant = (float)$montant;
         
         $prefix = substr($user['numero'], 0, 3);
@@ -101,71 +107,94 @@ class OperationController extends BaseController
         $typeRetrait = $this->typeOperationModel->where('label', 'retrait')->first();
         
         $frais = $this->baremeFraisModel->calculerFrais($montant, $typeRetrait['id'], $operateurId);
-        $montantTotal = $montant + $frais;
-        
-        if ($user['solde'] < $montantTotal) {
-            return redirect()->back()->with('error', 'Solde insuffisant. Montant + frais = ' . number_format($montantTotal, 0, ',', ' ') . ' Ar');
+
+        // Déterminer le montant total à débiter
+        if ($inclureFrais) {
+            // Si les frais sont inclus, le client paie le montant + les frais
+            $montantTotal = $montant + $frais;
+            $montantRetire = $montant; // Le client reçoit le montant demandé
+        } else {
+            // Si les frais ne sont pas inclus, le client paie seulement le montant
+            $montantTotal = $montant;
+            $montantRetire = $montant - $frais; // Le client reçoit le montant - les frais
         }
-        
+
+        // Vérifier si le client a assez de solde
+        if ($user['solde'] < $montantTotal) {
+            return redirect()->back()->with('error', 'Solde insuffisant. Montant total à débiter : ' . number_format($montantTotal, 0, ',', ' ') . ' Ar');
+        }
+
+        // Mettre à jour le solde
         $result = $this->userModel->updateSolde($user['id'], $montantTotal, 'subtract');
         if (!$result) {
             return redirect()->back()->with('error', 'Erreur lors du retrait');
         }
-        
+
+        // Enregistrer l'historique
         $data = [
             'user1' => $user['id'],
             'user2' => null,
             'type_mvt' => $typeRetrait['id'],
-            'montant' => $montant,
+            'montant' => $montantRetire, // Le montant réellement reçu par le client
             'frais_appliques' => $frais,
             'commission_appliquee' => 0,
             'montant_total' => $montantTotal,
             'operateur_destinataire' => null,
             'date_transaction' => date('Y-m-d H:i:s'),
         ];
-        
+
         $this->historiqueModel->insert($data);
-        
+
+        // Mettre à jour la session
         $userData = $this->userModel->find($user['id']);
         session()->set('user', array_merge($user, ['solde' => $userData['solde']]));
-        
-        return redirect()->to('/client/dashboard')->with('success', 'Retrait de ' . number_format($montant, 0, ',', ' ') . ' Ar effectué avec succès (frais: ' . number_format($frais, 0, ',', ' ') . ' Ar)');
+
+        $fraisMessage = $inclureFrais
+            ? ' (frais: ' . number_format($frais, 0, ',', ' ') . ' Ar inclus dans le montant total)'
+            : ' (frais: ' . number_format($frais, 0, ',', ' ') . ' Ar déduits du montant)';
+
+        return redirect()->to('/client/dashboard')->with(
+            'success',
+            'Retrait de ' . number_format($montantRetire, 0, ',', ' ') . ' Ar effectué avec succès' . $fraisMessage
+        );
     }
-    
+
     // ============================================
     // TRANSFERT (AVEC COMMISSION SI AUTRE OPÉRATEUR)
     // ============================================
-    
+
     public function transfert()
     {
         if (!session()->get('user')) {
             return redirect()->to('/client/login')->with('error', 'Veuillez vous connecter');
         }
-        
+
         $user = session()->get('user');
         $destinataire = $this->request->getPost('destinataire');
         $montant = $this->request->getPost('montant');
-        
+
         if (empty($destinataire)) {
             return redirect()->back()->with('error', 'Veuillez saisir le numéro du destinataire');
         }
-        
+
         if (empty($montant) || $montant <= 0) {
             return redirect()->back()->with('error', 'Montant invalide');
         }
-        
+
         $montant = (float)$montant;
-        
+
         if ($destinataire === $user['numero']) {
             return redirect()->back()->with('error', 'Vous ne pouvez pas vous transférer à vous-même');
         }
-        
-        // Vérifier que le destinataire existe
+
+        // ============================================
+        // VÉRIFICATION : LE DESTINATAIRE EXISTE
+        // ============================================
         $destinataireUser = $this->userModel->findByNumero($destinataire);
         if (!$destinataireUser) {
             return redirect()->back()->with('error', 'Le destinataire n\'existe pas');
         }
-        
+
         if ($destinataireUser['role'] !== 'client') {
             return redirect()->back()->with('error', 'Le destinataire n\'est pas un client valide');
         }
@@ -219,7 +248,7 @@ class OperationController extends BaseController
                 ' Ar = ' . number_format($montantTotal, 0, ',', ' ') . ' Ar'
             );
         }
-        
+
         // ============================================
         // DÉBITER L'ENVOYEUR
         // ============================================
@@ -227,7 +256,7 @@ class OperationController extends BaseController
         if (!$result) {
             return redirect()->back()->with('error', 'Erreur lors du transfert (débit)');
         }
-        
+
         // ============================================
         // CRÉDITER LE DESTINATAIRE (SEULEMENT LE MONTANT)
         // ============================================
@@ -252,7 +281,7 @@ class OperationController extends BaseController
             'operateur_destinataire' => ($commission > 0) ? $operateurDestinataireId : null,
             'date_transaction' => date('Y-m-d H:i:s'),
         ];
-        
+
         $this->historiqueModel->insert($data);
         
         $userData = $this->userModel->find($user['id']);
@@ -268,17 +297,21 @@ class OperationController extends BaseController
         
         return redirect()->to('/client/dashboard')->with('success', $message);
     }
-    
+
     // ============================================
     // API : CALCULER LES FRAIS ET COMMISSION
     // ============================================
-    
+
+    // ============================================
+    // API : CALCULER LES FRAIS AVEC OPTION
+    // ============================================
+
     public function calculerFrais()
     {
         if (!session()->get('user')) {
             return $this->response->setJSON(['error' => 'Non authentifié'], 401);
         }
-        
+
         $user = session()->get('user');
         $montant = $this->request->getPost('montant');
         $destinataire = $this->request->getPost('destinataire');
@@ -286,16 +319,16 @@ class OperationController extends BaseController
         if (empty($montant) || $montant <= 0) {
             return $this->response->setJSON(['error' => 'Montant invalide', 'frais' => 0]);
         }
-        
+
         $montant = (float)$montant;
-        
+
         $prefix = substr($user['numero'], 0, 3);
         $operateurData = $this->prefixesModel->where('prefixes', $prefix)->first();
         $operateurId = $operateurData['id_operateur'] ?? null;
-        
+
         $typeRetrait = $this->typeOperationModel->where('label', 'retrait')->first();
         $typeTransfert = $this->typeOperationModel->where('label', 'transfert')->first();
-        
+
         $fraisRetrait = $this->baremeFraisModel->calculerFrais($montant, $typeRetrait['id'], $operateurId);
         $fraisTransfert = $this->baremeFraisModel->calculerFrais($montant, $typeTransfert['id'], $operateurId);
         

@@ -12,7 +12,7 @@ class PrefixesModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $allowedFields    = ['prefixes', 'id_operateur', 'actif'];
-    
+
     protected $useTimestamps = false;
 
     protected $validationRules = [
@@ -35,26 +35,37 @@ class PrefixesModel extends Model
         ],
     ];
 
-    public function getPrefixesWithOperateur()
+    public function getPrefixesWithOperateur(int $operateurId)
     {
         return $this->select('prefixes.*, operateur.operateur')
-                    ->join('operateur', 'operateur.id = prefixes.id_operateur')
-                    ->orderBy('prefixes.prefixes', 'ASC')
-                    ->findAll();
+            ->join('operateur', 'operateur.id = prefixes.id_operateur')
+            ->orderBy('prefixes.id_operateur', 'ASC')
+            ->where('id_operateur', $operateurId)
+            ->findAll();
     }
 
     public function getActivePrefixes()
     {
         return $this->where('actif', 1)
-                    ->orderBy('prefixes', 'ASC')
-                    ->findAll();
+            ->orderBy('prefixes', 'ASC')
+            ->findAll();
     }
 
     public function getPrefixesByOperateur(int $operateurId)
     {
         return $this->where('id_operateur', $operateurId)
-                    ->orderBy('prefixes', 'ASC')
-                    ->findAll();
+            ->orderBy('prefixes', 'ASC')
+            ->findAll();
+    }
+
+    public function getPrefixesByOperateurWithOperateur(int $ourOperateurId)
+    {
+        return $this->select('prefixes.*, operateur.operateur')
+            ->join('operateur', 'operateur.id = prefixes.id_operateur')
+            ->orderBy('prefixes.id_operateur', 'ASC')
+            ->where('id_operateur !=', $ourOperateurId)
+            ->orderBy('prefixes', 'ASC')
+            ->findAll();
     }
 
     public function togglePrefix(int $id)
