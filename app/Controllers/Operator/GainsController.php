@@ -41,24 +41,24 @@ class GainsController extends BaseController
             // Récupérer les types d'opération
             $types = $this->typeOperationModel->findAll();
             
-            // ============================================
+            
             // 1. STATISTIQUES GLOBALES
-            // ============================================
+            
             $resume = $this->getResumeGains($transactions);
             
-            // ============================================
+            
             // 2. MONTANTS À REVERSER
-            // ============================================
+            
             $montantsAReverser = $this->getMontantsAReverser($transactions);
             
-            // ============================================
+            
             // 3. STATISTIQUES PAR TYPE
-            // ============================================
+            
             $statsType = $this->getStatsByType($transactions);
             
-            // ============================================
+            
             // 4. SÉPARER NOTRE OPÉRATEUR DES AUTRES
-            // ============================================
+            
             $notreOperateur = null;
             $autresOperateurs = [];
             
@@ -159,9 +159,9 @@ class GainsController extends BaseController
         }
     }
     
-    // ============================================
+    
     // MÉTHODES PRIVÉES
-    // ============================================
+    
     
     private function getAllTransactions()
     {

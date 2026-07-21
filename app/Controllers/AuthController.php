@@ -26,9 +26,9 @@ class AuthController extends BaseController
         return view('auth/login');
     }
   
-    // ============================================
+    
     // LOGIN CLIENT
-    // ============================================
+    
     
     public function clientLoginForm()
     {
@@ -110,9 +110,9 @@ class AuthController extends BaseController
         return redirect()->to('/client/dashboard')->with('success', 'Bienvenue ' . $user['numero']);
     }
 
-    // ============================================
+    
     // LOGIN ADMIN / OPÉRATEUR
-    // ============================================
+    
     
     public function adminLoginForm()
     {

@@ -34,9 +34,9 @@ class HistoryController extends BaseController
             session()->set('user', $user);
         }
         
-        // ============================================
+        
         // UTILISER LA METHODE DU MODELE (getTransactionsByUser)
-        // ============================================
+        
         $transactions = $this->historiqueModel->getTransactionsByUser($user['id'], 100);
         
         // Récupérer les types d'opération

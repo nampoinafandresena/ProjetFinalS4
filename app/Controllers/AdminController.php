@@ -11,9 +11,9 @@ use App\Models\HistoriqueModel;
 
 class AdminController extends BaseController
 {
-    // ============================================
+    
     // DASHBOARD
-    // ============================================
+    
 
     public function dashboard()
     {
@@ -39,9 +39,9 @@ class AdminController extends BaseController
         return view('pages/admin-dashboard', $data);
     }
 
-    // ============================================
+    
     // GESTION DES OPÉRATEURS ET COMMISSIONS
-    // ============================================
+    
 
     public function operateurs()
     {
@@ -84,9 +84,9 @@ class AdminController extends BaseController
         return redirect()->to('/admin/operateurs')->with('error', 'Erreur lors de la mise à jour');
     }
 
-    // ============================================
+    
     // GESTION DES PRÉFIXES
-    // ============================================
+    
 
     public function prefixe()
     {
@@ -132,9 +132,9 @@ class AdminController extends BaseController
         return redirect()->to('/admin/prefixe')->with('error', 'Erreur lors de la suppression');
     }
 
-    // ============================================
+    
     // BARÈME FRAIS (UNIQUEMENT TELMA)
-    // ============================================
+    
 
     public function baremeFrais()
     {
@@ -249,7 +249,7 @@ class AdminController extends BaseController
         return redirect()->to('/admin/bareme-frais')->with('error', 'Erreur lors de la mise à jour');
     }
 
-    // ============================================
+    
     public function clients()
     {
         $userModel = new UserModel();
@@ -299,9 +299,9 @@ class AdminController extends BaseController
         return $lastDigits;
     }
 
-    // ============================================
+    
     // MÉTHODES HELPER
-    // ============================================
+    
 
     private function countActifs($prefixes)
     {

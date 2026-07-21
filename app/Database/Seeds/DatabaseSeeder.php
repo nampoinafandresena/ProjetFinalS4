@@ -8,9 +8,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
-        // ============================================
+        
         // 1. OPÉRATEURS
-        // ============================================
+        
         $this->db->table('operateur')->truncate();
         $operateurs = [
             ['operateur' => 'Orange', 'commission' => 2.5],

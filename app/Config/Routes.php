@@ -13,9 +13,9 @@ $routes->get('client/login', 'AuthController::clientLoginForm');
 $routes->post('client/login', 'AuthController::clientLogin');
 $routes->get('logout', 'AuthController::logout');
 
-// ============================================
+
 // CLIENT - PROTÉGÉ PAR AUTH
-// ============================================
+
 $routes->group('client', function($routes) {
     $routes->get('dashboard', 'Client\DashboardController::index');
     $routes->get('history', 'Client\HistoryController::index');
@@ -25,9 +25,9 @@ $routes->group('client', function($routes) {
     $routes->post('calculer-frais', 'Client\OperationController::calculerFrais');
 });
 
-// ============================================
+
 // ADMIN - SANS FILTRE AUTH (ACCÈS DIRECT)
-// ============================================
+
 $routes->group('admin', function($routes) {
     $routes->get('dashboard', 'AdminController::dashboard');
     $routes->get('prefixe', 'AdminController::prefixe');
@@ -41,9 +41,9 @@ $routes->group('admin', function($routes) {
     $routes->post('operateur/update/(:num)', 'AdminController::updateOperateur/$1');
 });
 
-// ============================================
+
 // OPERATOR - SANS FILTRE AUTH (ACCÈS DIRECT)
-// ============================================
+
 $routes->group('operator', function($routes) {
     $routes->get('gains', 'Operator\GainsController::index');
     $routes->get('clients', 'AdminController::clients');

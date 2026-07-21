@@ -14,9 +14,9 @@ declare(strict_types=1);
 use CodeIgniter\Cookie\Cookie;
 use Config\Cookie as CookieConfig;
 
-// =============================================================================
+=================================
 // CodeIgniter Cookie Helpers
-// =============================================================================
+=================================
 
 if (! function_exists('set_cookie')) {
     /**

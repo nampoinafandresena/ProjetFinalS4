@@ -34,9 +34,9 @@ class DashboardController extends BaseController
             session()->set('user', $user);
         }
         
-        // ============================================
+        
         // UTILISER LA METHODE DU MODELE
-        // ============================================
+        
         $transactions = $this->historiqueModel->getTransactionsByUser($user['id'], 10);
         
         $types = $this->typeOperationModel->findAll();

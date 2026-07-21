@@ -30,10 +30,8 @@ class OperationController extends BaseController
         $this->operateurModel = new OperateurModel();
     }
 
-    // ============================================
+    
     // DÉPÔT
-    // ============================================
-
     public function depot()
     {
         if (!session()->get('user')) {
@@ -76,14 +74,7 @@ class OperationController extends BaseController
         return redirect()->to('/client/dashboard')->with('success', 'Dépôt de ' . number_format($montant, 0, ',', ' ') . ' Ar effectué avec succès');
     }
 
-    // ============================================
-    // RETRAIT
-    // ============================================
-
-    // ============================================
     // RETRAIT (AVEC FRAIS OPTIONNELS)
-    // ============================================
-
     public function retrait()
     {
         if (!session()->get('user')) {
@@ -159,10 +150,8 @@ class OperationController extends BaseController
         );
     }
 
-    // ============================================
+    
     // TRANSFERT (AVEC COMMISSION SI AUTRE OPÉRATEUR)
-    // ============================================
-
     public function transfert()
     {
         if (!session()->get('user')) {
@@ -187,9 +176,9 @@ class OperationController extends BaseController
             return redirect()->back()->with('error', 'Vous ne pouvez pas vous transférer à vous-même');
         }
 
-        // ============================================
+        
         // VÉRIFICATION : LE DESTINATAIRE EXISTE
-        // ============================================
+        
         $destinataireUser = $this->userModel->findByNumero($destinataire);
         if (!$destinataireUser) {
             return redirect()->back()->with('error', 'Le destinataire n\'existe pas');
@@ -199,9 +188,9 @@ class OperationController extends BaseController
             return redirect()->back()->with('error', 'Le destinataire n\'est pas un client valide');
         }
         
-        // ============================================
+        
         // DÉTERMINER L'OPÉRATEUR DE L'ENVOYEUR ET DU DESTINATAIRE
-        // ============================================
+        
         $prefixEnvoyeur = substr($user['numero'], 0, 3);
         $prefixDestinataire = substr($destinataire, 0, 3);
         
@@ -211,15 +200,15 @@ class OperationController extends BaseController
         $operateurEnvoyeurId = $operateurEnvoyeur['id_operateur'] ?? null;
         $operateurDestinataireId = $operateurDestinataire['id_operateur'] ?? null;
         
-        // ============================================
+        
         // CALCULER LES FRAIS (TOUJOURS APPLIQUÉS)
-        // ============================================
+        
         $typeTransfert = $this->typeOperationModel->where('label', 'transfert')->first();
         $frais = $this->baremeFraisModel->calculerFrais($montant, $typeTransfert['id'], $operateurEnvoyeurId);
         
-        // ============================================
+        
         // CALCULER LA COMMISSION (SEULEMENT SI AUTRE OPÉRATEUR)
-        // ============================================
+        
         $commission = 0;
         $commissionPourcentage = 0;
         $operateurDestLabel = null;
@@ -234,9 +223,9 @@ class OperationController extends BaseController
             }
         }
         
-        // ============================================
+        
         // MONTANT TOTAL À DÉBITER
-        // ============================================
+        
         $montantTotal = $montant + $frais + $commission;
         
         // Vérifier le solde
@@ -249,17 +238,17 @@ class OperationController extends BaseController
             );
         }
 
-        // ============================================
+        
         // DÉBITER L'ENVOYEUR
-        // ============================================
+        
         $result = $this->userModel->updateSolde($user['id'], $montantTotal, 'subtract');
         if (!$result) {
             return redirect()->back()->with('error', 'Erreur lors du transfert (débit)');
         }
 
-        // ============================================
+        
         // CRÉDITER LE DESTINATAIRE (SEULEMENT LE MONTANT)
-        // ============================================
+        
         $result = $this->userModel->updateSolde($destinataireUser['id'], $montant, 'add');
         if (!$result) {
             // Annuler le débit
@@ -267,9 +256,9 @@ class OperationController extends BaseController
             return redirect()->back()->with('error', 'Erreur lors du transfert (crédit)');
         }
         
-        // ============================================
+        
         // ENREGISTRER LA TRANSACTION AVEC COMMISSION
-        // ============================================
+        
         $data = [
             'user1' => $user['id'],
             'user2' => $destinataireUser['id'],
@@ -298,14 +287,7 @@ class OperationController extends BaseController
         return redirect()->to('/client/dashboard')->with('success', $message);
     }
 
-    // ============================================
-    // API : CALCULER LES FRAIS ET COMMISSION
-    // ============================================
-
-    // ============================================
     // API : CALCULER LES FRAIS AVEC OPTION
-    // ============================================
-
     public function calculerFrais()
     {
         if (!session()->get('user')) {
@@ -332,9 +314,9 @@ class OperationController extends BaseController
         $fraisRetrait = $this->baremeFraisModel->calculerFrais($montant, $typeRetrait['id'], $operateurId);
         $fraisTransfert = $this->baremeFraisModel->calculerFrais($montant, $typeTransfert['id'], $operateurId);
         
-        // ============================================
+        
         // CALCUL DE LA COMMISSION POUR LE TRANSFERT
-        // ============================================
+        
         $commissionTransfert = 0;
         $commissionPourcentage = 0;
         $operateurDestLabel = null;
