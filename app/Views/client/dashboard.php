@@ -468,11 +468,7 @@
                             <input type="number" name="montant" id="montantInput" placeholder="0" min="0" step="100" class="input-field text-lg font-bold" oninput="calculerFrais()" />
                         </div>
 
-                        <!-- Dans le modal-body, après le champ montant -->
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Montant (Ar)</label>
-                            <input type="number" name="montant" id="montantInput" placeholder="0" min="0" step="100" class="input-field text-lg font-bold" oninput="calculerFrais()" />
-                        </div>
+                        
 
                         <!-- Ajout du checkbox pour inclure les frais -->
                         <div id="fraisOptionField" style="display:none;">
