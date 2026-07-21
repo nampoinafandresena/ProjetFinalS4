@@ -40,6 +40,51 @@ class AdminController extends BaseController
     }
 
     // ============================================
+    // GESTION DES OPÉRATEURS ET COMMISSIONS
+    // ============================================
+
+    public function operateurs()
+    {
+        $operateurModel = new OperateurModel();
+        $prefixModel = new PrefixesModel();
+        
+        $operateurs = $operateurModel->findAll();
+        
+        // Ajouter le nombre de préfixes pour chaque opérateur
+        foreach ($operateurs as &$op) {
+            $op['nb_prefixes'] = $prefixModel->where('id_operateur', $op['id'])->countAllResults();
+        }
+        
+        $data = [
+            'operateurs' => $operateurs,
+            'title' => 'Gestion des opérateurs et commissions'
+        ];
+        
+        return view('pages/admin-operateurs', $data);
+    }
+
+    public function updateOperateur($id)
+    {
+        $operateurModel = new OperateurModel();
+        
+        $commission = $this->request->getPost('commission');
+        
+        if ($commission === null || $commission < 0 || $commission > 100) {
+            return redirect()->to('/admin/operateurs')->with('error', 'Commission invalide (0-100%)');
+        }
+        
+        $data = [
+            'commission' => (float)$commission
+        ];
+        
+        if ($operateurModel->update($id, $data)) {
+            return redirect()->to('/admin/operateurs')->with('success', 'Commission mise à jour avec succès');
+        }
+        
+        return redirect()->to('/admin/operateurs')->with('error', 'Erreur lors de la mise à jour');
+    }
+
+    // ============================================
     // GESTION DES PRÉFIXES
     // ============================================
 
